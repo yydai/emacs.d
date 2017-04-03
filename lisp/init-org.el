@@ -1,12 +1,3 @@
-(when (< emacs-major-version 24)
-  (require-package 'org))
-(require-package 'org-fstree)
-(when *is-a-mac*
-  (maybe-require-package 'grab-mac-link)
-  (require-package 'org-mac-iCal))
-
-(maybe-require-package 'org-cliplink)
-
 (define-key global-map (kbd "C-c l") 'org-store-link)
 (define-key global-map (kbd "C-c a") 'org-agenda)
 
@@ -347,22 +338,57 @@ typical word processor."
 (after-load 'org
   (org-babel-do-load-languages
    'org-babel-load-languages
-   `((R . t)
+   `(
      (ditaa . t)
      (dot . t)
-     (emacs-lisp . t)
-     (gnuplot . t)
-     (haskell . nil)
-     (latex . t)
-     (ledger . t)
-     (ocaml . nil)
-     (octave . t)
+     (ditaa . t)
+     (R . t)
      (python . t)
      (ruby . t)
-     (screen . nil)
-     (,(if (locate-library "ob-sh") 'sh 'shell) . t)
-     (sql . nil)
+     (gnuplot . t)
+     (clojure . t)
+     (shell . t)
+     (ledger . t)
+     (org . t)
+     (plantuml . t)
+     (latex . t)
      (sqlite . t))))
+
+;;----------------------------------------------------------------------------------------------------
+;; Org blog settings
+;;----------------------------------------------------------------------------------------------------
+(require 'ox-publish)
+(require 'ox-html)
+(setq org-publish-project-alist
+      '(
+        ("blog-notes"
+         :base-directory "~/workspace/blog/org/"
+         :base-extension "org"
+         :publishing-directory "~/workspace/blog/public_html/"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :headline-levels 4
+         :section-numbers nil
+
+         :auto-sitemap t
+         :sitemap-filename "sitemap.org"
+         :sitemap-title "Sitemap"
+
+         :html-mathjax-template "<script type=\"text/javascript\" async src=\"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML\"></script>"
+
+         )
+        ("blog-static"
+         :base-directory "~/workspace/blog/org/"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :publishing-directory "~/workspace/blog/public_html/"
+         :recursive t
+         :publishing-function org-publish-attachment
+         )
+
+        ("blog" :components ("blog-notes" "blog-static"))
+
+        ))
 
 
 (provide 'init-org)
+;;; init-org.el ends here

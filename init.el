@@ -2,6 +2,8 @@
 ;;; This file bootstraps the configuration, which is divided into
 ;;; a number of other files.
 
+(package-initialize)
+(setq package-enable-at-startup nil)
 (let ((minver "23.3"))
   (when (version<= emacs-version minver)
     (error "Your Emacs is too old -- this config requires v%s or higher" minver)))
@@ -89,6 +91,7 @@
 (require 'init-crontab)
 (require 'init-textile)
 (require 'init-markdown)
+(require 'init-auctex)
 (require 'init-csv)
 (require 'init-erlang)
 (require 'init-javascript)
