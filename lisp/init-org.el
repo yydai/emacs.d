@@ -81,12 +81,17 @@ typical word processor."
 
 (global-set-key (kbd "C-c c") 'org-capture)
 
+
+
 (setq org-capture-templates
       `(("t" "todo" entry (file "")  ; "" => org-default-notes-file
          "* NEXT %?\n%U\n" :clock-resume t)
         ("n" "note" entry (file "")
          "* %? :NOTE:\n%U\n%a\n" :clock-resume t)
         ))
+
+;;; my own settings
+
 
 
 
@@ -128,17 +133,35 @@ typical word processor."
 
 
 ;;; To-do settings
-
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
               (sequence "PROJECT(p)" "|" "DONE(d!/!)" "CANCELLED(c@/!)")
-              (sequence "WAITING(w@/!)" "DELEGATED(e!)" "HOLD(h)" "|" "CANCELLED(c@/!)")))
-      org-todo-repeat-to-state "NEXT")
-
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
 (setq org-todo-keyword-faces
-      (quote (("NEXT" :inherit warning)
-              ("PROJECT" :inherit font-lock-string-face))))
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("MEETING" :foreground "forest green" :weight bold)
+              ("PHONE" :foreground "forest green" :weight bold))))
 
+;; Changing a task state is done with C-c C-t KEY
+;; where KEY is the appropriate fast todo state selection key as defined in org-todo-keywords.
+(setq org-use-fast-todo-selection t)
+
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+
+;;; Adding New Tasks Quickly with Org Capture
+;;; This will replace the "remember"
 
 
 ;;; Agenda views
@@ -305,7 +328,39 @@ typical word processor."
 (require-package 'org-pomodoro)
 (setq org-pomodoro-keep-killed-pomodoro-time t)
 (after-load 'org-agenda
-  (define-key org-agenda-mode-map (kbd "P") 'org-pomodoro))
+  (define-key org-agenda-mode-map (kbd "P") 'org-pomodoro)
+  (define-key org-agenda-mode-map "\C-n" 'next-line)
+  (define-key org-agenda-keymap "\C-n" 'next-line)
+  (define-key org-agenda-mode-map "\C-p" 'previous-line)
+  (define-key org-agenda-keymap "\C-p" 'previous-line))
+
+
+;;;=====================
+
+;;;=====================
+(require 'remember)
+
+(add-hook 'remember-mode-hook 'org-remember-apply-template)
+
+(define-key global-map [(control meta ?r)] 'remember)
+(custom-set-variables
+ '(org-agenda-files (quote ("~/workspace/github/org/gtd/todo.org")))
+ '(org-default-notes-file "~/workspace/github/org/gtd/notes.org")
+ '(org-agenda-ndays 7)
+ '(org-deadline-warning-days 14)
+ '(org-agenda-show-all-dates t)
+ '(org-agenda-skip-deadline-if-done t)
+ '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-start-on-weekday nil)
+ '(org-reverse-note-order t)
+ '(org-fast-tag-selection-single-key (quote expert))
+ '(org-remember-store-without-prompt t)
+ '(org-remember-templates
+   (quote ((116 "* TODO %?\n  %u" "~/workspace/github/org/gtd/todo.org" "Tasks")
+           (110 "* %u %?" "~/workspace/github/org/gtd/notes.org" "Notes"))))
+ '(remember-annotation-functions (quote (org-remember-annotation)))
+ '(remember-handler-functions (quote (org-remember-handler))))
+
 
 
 ;; ;; Show iCal calendars in the org agenda
