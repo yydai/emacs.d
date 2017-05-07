@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: blog header css
+# key: bcss
+# --
+
+#+TITLE: $0
+#+OPTIONS: html-postamble:nil html-preamble:t tex:t
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="$1css/worg2.css"/>
+
+-------
+$2

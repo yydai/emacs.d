@@ -3,12 +3,15 @@
 ;;; a number of other files.
 
 (package-initialize)
+
+(defvar best-gc-cons-threshold 4000000 "Best default gc threshold value. Should't be too big.")
+(setq gc-cons-threshold most-positive-fixnum)
+
+(setq emacs-load-start-time (current-time))
+
 (setq package-enable-at-startup nil)
-(let ((minver "23.3"))
-  (when (version<= emacs-version minver)
-    (error "Your Emacs is too old -- this config requires v%s or higher" minver)))
-(when (version<= emacs-version "24")
-  (message "Your Emacs is old, and some functionality in this config will be disabled. Please upgrade if possible."))
+
+(setq emacs-load-start-time (current-time))
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (require 'init-benchmarking) ;; Measure startup time
@@ -16,14 +19,12 @@
 (defconst *spell-check-support-enabled* nil) ;; Enable with t if you prefer
 (defconst *is-a-mac* (eq system-type 'darwin))
 
-;;----------------------------------------------------------------------------
-;; Temporarily reduce garbage collection during startup
-;;----------------------------------------------------------------------------
-(defconst sanityinc/initial-gc-cons-threshold gc-cons-threshold
-  "Initial value of `gc-cons-threshold' at start-up time.")
-(setq gc-cons-threshold (* 128 1024 1024))
-(add-hook 'after-init-hook
-          (lambda () (setq gc-cons-threshold sanityinc/initial-gc-cons-threshold)))
+
+;; *Message* buffer should be writable in 24.4+
+(defadvice switch-to-buffer (after switch-to-buffer-after-hack activate)
+  (if (string= "*Messages*" (buffer-name))
+      (read-only-mode -1)))
+
 
 ;;----------------------------------------------------------------------------
 ;; Bootstrap config
@@ -125,6 +126,8 @@
 (require 'init-folding)
 (require 'init-dash)
 (require 'init-ledger)
+(require 'init-yasnippet)
+(require 'init-key-bindings)
 ;; Extra packages which don't require any configuration
 
 (require-package 'gnuplot)
@@ -164,6 +167,11 @@
 
 (when (maybe-require-package 'uptimes)
   (add-hook 'after-init-hook (lambda () (require 'uptimes))))
+
+(when (require 'time-date nil t)
+  (message "Emacs startup time: %d seconds."
+           (time-to-seconds (time-since emacs-load-start-time))))
+
 
 
 (provide 'init)
