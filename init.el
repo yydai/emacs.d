@@ -131,6 +131,7 @@
 (require 'init-key-bindings)
 (require 'init-mouse)
 (disable-mouse-mode 1)
+(require 'init-blog)
 ;; Extra packages which don't require any configuration
 
 (require-package 'gnuplot)

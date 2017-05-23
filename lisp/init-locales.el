@@ -179,5 +179,42 @@ Version 2017-02-10"
 (global-set-key (kbd "<f8>") 'ydai-run-current-file)
 (add-hook 'c++-mode-hook (lambda () (local-set-key (kbd "C-c C-c") 'cpp-single-file-compile)))
 
+
+
+;; search Wikipedia
+(require 'browse-url) ; part of gnu emacs
+
+(defun my-lookup-wikipedia ()
+  "Look up the word under cursor in Wikipedia.
+If there is a text selection (a phrase), use that.
+
+This command switches to browser."
+  (interactive)
+  (let (word)
+    (setq word
+          (if (use-region-p)
+              (buffer-substring-no-properties (region-beginning) (region-end))
+            (current-word)))
+    (setq word (replace-regexp-in-string " " "_" word))
+    (browse-url (concat "http://en.wikipedia.org/wiki/" word))
+    ;; (eww myUrl) ; emacs's own browser
+    ))
+
+
+(defun my-select-inside-quotes ()
+  "Select text between double straight quotes
+on each side of cursor."
+  (interactive)
+  (let (p1 p2)
+    (skip-chars-backward "^\"")
+    (setq p1 (point))
+    (skip-chars-forward "^\"")
+    (setq p2 (point))
+
+    (goto-char p1)
+    (push-mark p2)
+    (setq mark-active t)))
+
+
 (provide 'init-locales)
 ;;; init-locales.el ends here
