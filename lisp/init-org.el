@@ -166,7 +166,6 @@ typical word processor."
 
 ;;; Agenda views
 
-(setq-default org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
 
 
 (let ((active-project-match "-INBOX/PROJECT"))
@@ -254,62 +253,18 @@ typical word processor."
 ;;; Org clock
 
 ;; Save the running clock and all clock history when exiting Emacs, load it on startup
-(after-load 'org
-  (org-clock-persistence-insinuate))
-(setq org-clock-persist t)
-(setq org-clock-in-resume t)
 
-;; Save clock data and notes in the LOGBOOK drawer
-(setq org-clock-into-drawer t)
-;; Save state changes in the LOGBOOK drawer
-(setq org-log-into-drawer t)
-;; Removes clocked tasks with 0:00 duration
-(setq org-clock-out-remove-zero-time-clocks t)
-
-;; Show clock sums as hours and minutes, not "n days" etc.
-(setq org-time-clocksum-format
-      '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 
 
 
 ;;; Show the clocked-in task - if any - in the header line
-(defun sanityinc/show-org-clock-in-header-line ()
-  (setq-default header-line-format '((" " org-mode-line-string " "))))
-
-(defun sanityinc/hide-org-clock-from-header-line ()
-  (setq-default header-line-format nil))
-
-(add-hook 'org-clock-in-hook 'sanityinc/show-org-clock-in-header-line)
-(add-hook 'org-clock-out-hook 'sanityinc/hide-org-clock-from-header-line)
-(add-hook 'org-clock-cancel-hook 'sanityinc/hide-org-clock-from-header-line)
-
-(after-load 'org-clock
-  (define-key org-clock-mode-line-map [header-line mouse-2] 'org-clock-goto)
-  (define-key org-clock-mode-line-map [header-line mouse-1] 'org-clock-menu))
 
 
 
-(when (and *is-a-mac* (file-directory-p "/Applications/org-clock-statusbar.app"))
-  (add-hook 'org-clock-in-hook
-            (lambda () (call-process "/usr/bin/osascript" nil 0 nil "-e"
-                                (concat "tell application \"org-clock-statusbar\" to clock in \"" org-clock-current-task "\""))))
-  (add-hook 'org-clock-out-hook
-            (lambda () (call-process "/usr/bin/osascript" nil 0 nil "-e"
-                                "tell application \"org-clock-statusbar\" to clock out"))))
 
 
 
 ;; Remove empty LOGBOOK drawers on clock out
-(defun sanityinc/remove-empty-drawer-on-clock-out ()
-  (interactive)
-  (save-excursion
-    (beginning-of-line 0)
-    (org-remove-empty-drawer-at "LOGBOOK" (point))))
-
-(after-load 'org-clock
-  (add-hook 'org-clock-out-hook 'sanityinc/remove-empty-drawer-on-clock-out 'append))
-
-
 
 ;; TODO: warn about inconsistent items, e.g. TODO inside non-PROJECT
 ;; TODO: nested projects!
@@ -414,6 +369,7 @@ typical word processor."
 ;;----------------------------------------------------------------------------------------------------
 (require 'ox-publish)
 (require 'ox-html)
+
 (setq org-publish-project-alist
       '(
         ("blog-notes"
@@ -430,7 +386,6 @@ typical word processor."
          :sitemap-title "Sitemap"
 
          :html-mathjax-template "<script type=\"text/javascript\" async src=\"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML\"></script>"
-
          )
         ("blog-static"
          :base-directory "~/workspace/blog/org/"
@@ -444,7 +399,24 @@ typical word processor."
 
         ))
 
+(setq org-html-head-extra
+      "<link rel='stylesheet' href='../css/worg2.css' type='text/css'/>")
 
+(setq org-html-preamble "<div class='nav'>
+<div class='blog' style='text-align:right'>
+<a href='/index.html'> Home </a> | <a href='/contact.html'> Contact </a>
+</div>
+</div>")
+
+(setq org-html-postamble "<hr />\n <div class='footer'>
+© 2017 yydai<br/>
+Email: dai92817@icloud.com
+</div>")
+
+
+
+;; this code can clear the cache and will regenerate all the html files
+;; (setq org-publish-use-timestamps-flag nil)
 
 
 ;;; screen shot
@@ -475,6 +447,60 @@ same directory as the org-buffer and insert a link to this file."
   (org-display-inline-images)
   )
 
+
+
+;; The codes of blow are coming from this place:
+;; http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
+;; insert a youtube video link, show it can show in my blog
+;; we can use it by this [[yt:A3JAlWM8qRM]]
+(defvar yt-iframe-format
+  ;; You may want to change your width and height.
+  (concat "<iframe width=\"440\""
+          " height=\"335\""
+          " src=\"https://www.youtube.com/embed/%s\""
+          " frameborder=\"0\""
+          " allowfullscreen>%s</iframe>"))
+
+(org-add-link-type
+ "yt"
+ (lambda (handle)
+   (browse-url
+    (concat "https://www.youtube.com/embed/"
+            handle)))
+ (lambda (path desc backend)
+   (cl-case backend
+     (html (format yt-iframe-format
+                   path (or desc "")))
+     (latex (format "\href{%s}{%s}"
+                    path (or desc "video"))))))
+
+
+;; create a new blog
+;; if sub current dictionary, just input . or RETURN
+;; reference: https://www.emacswiki.org/emacs/InteractiveFunction
+;; and https://learnxinyminutes.com/docs/elisp/
+;; and http://ergoemacs.org/emacs/elisp_buffer_file_functions.html
+(defun new-blog (title &optional sub)
+  (interactive "sBlog title to show? \nsSubfolder is?")
+  (setq base "~/workspace/blog/org/")
+  (setq filename
+        (concat base sub  "/" title))
+  (if (file-exists-p filename)
+      (find-file filename)
+    (let ((buf (generate-new-buffer title)))
+      (switch-to-buffer buf)
+      (goto-char (point-min))
+      (insert (concat "#+TITLE: " "\n\n-------\n"))
+      (write-file filename)
+      (goto-char (+ (length "#+TITLE: ") 1))
+      )))
+
+
+;; set org bullets
+;; https://zhangda.wordpress.com/
+;; https://github.com/sabof/org-bullets
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (provide 'init-org)
 ;;; init-org.el ends here

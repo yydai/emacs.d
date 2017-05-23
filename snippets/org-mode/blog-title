@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: blog title
+# key: bt
+# --
+#+TITLE: $0

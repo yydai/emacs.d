@@ -14,6 +14,7 @@
 (setq emacs-load-start-time (current-time))
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+
 (require 'init-benchmarking) ;; Measure startup time
 
 (defconst *spell-check-support-enabled* nil) ;; Enable with t if you prefer
@@ -128,6 +129,8 @@
 (require 'init-ledger)
 (require 'init-yasnippet)
 (require 'init-key-bindings)
+(require 'init-mouse)
+(disable-mouse-mode 1)
 ;; Extra packages which don't require any configuration
 
 (require-package 'gnuplot)

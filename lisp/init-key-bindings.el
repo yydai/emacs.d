@@ -11,13 +11,16 @@
   ;;( (kbd "s ;") 'avy-goto-char)
   (define-key my-leader-key-map (kbd "s ;") 'avy-goto-char)
   (define-key my-leader-key-map (kbd "s d") 'dash-at-point)
+  (define-key my-leader-key-map (kbd "s s") 'projectile-ag)
+  ;; f(file)
+  (define-key my-leader-key-map (kbd "f f") 'projectile-find-file)
+  (define-key my-leader-key-map (kbd "f e") 'projectile-recentf)
   ;; begin with c(common)
   (define-key my-leader-key-map (kbd "c s") 'my-org-screenshot)
   )
 
 (global-set-key (kbd "s-SPC") 'my-leader-key-map)
 ;;; avy settings
-
 
 (provide 'init-key-bindings)
 ;;; init-key-bindings.el ends here

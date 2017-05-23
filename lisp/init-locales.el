@@ -1,3 +1,8 @@
+;; packages
+;; elpy, py-
+
+
+
 (defun sanityinc/utf8-locale-p (v)
   "Return whether locale string V relates to a UTF-8 locale."
   (and v (string-match "UTF-8" v)))
@@ -158,7 +163,6 @@ Version 2017-02-10"
 
 
 ;;;============settings=====================
-(toggle-debug-on-quit 1)
 (set-face-attribute 'default nil :font "Monaco-18" )
 (setq-default cursor-type 'bar)
 ;;; show the line number
