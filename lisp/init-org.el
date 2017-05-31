@@ -359,6 +359,7 @@ typical word processor."
      (clojure . t)
      (shell . t)
      (ledger . t)
+     (http . t)
      (org . t)
      (plantuml . t)
      (latex . t)
@@ -399,24 +400,127 @@ typical word processor."
 
         ))
 
+;; add jquery support
 (setq org-html-head-extra
-      "<link rel='stylesheet' href='../css/worg2.css' type='text/css'/>")
+      "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<link rel='stylesheet' href='../css/worg2.css' typbe='text/css'/>")
 
-(setq org-html-preamble "<div class='nav'>
+(setq org-html-preamble "
+<div class='nav'>
 <div class='blog' style='text-align:right'>
 <a href='/index.html'> Home </a> | <a href='/contact.html'> Contact </a>
 </div>
 </div>")
 
-(setq org-html-postamble "<hr />\n <div class='footer'>
+(setq org-html-postamble "<script type=\"text/javascript\" src=\"https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js\"></script>
+<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js\"></script>
+
+<script>
+var base_url = 'https://api.github.com';
+var title = document.title;
+var owner = 'yydai';
+var repo = 'yydai.github.io';
+var search_issues = base_url + '/search/issues?q=' + title + '+user:' + owner + '+label:blog';
+
+console.log(\"search_issues = \"+ search_issues);
+
+function test() {
+  jQuery.ajax({
+      type: 'GET',
+      async: false,
+      dataType:'json',
+      url: search_issues,
+      success:function(data) {
+         result = data;
+      }
+  });
+  return result;
+}
+var result = test();
+var items = result.items[0];
+if(jQuery.isEmptyObject(items)) {
+    create(title);
+} else {
+    html_url = items.html_url;
+	document.body.innerHTML +=
+'<div id=\"comments\"><h2>Comments</h2><div id=\"header\">Want to leave a comment? Visit <a href=\"'+ html_url + '\"> this issue page on GitHub</a> (you will need a GitHub account).</div></div>'
+}
+
+
+function create(title) {
+    var creare = base_url + '/repos/' + owner + '/' + repo + '/issues';
+  var payload = {
+          'title': title,
+      'body': 'You can write comments in this issues.',
+      'labels': ['blog'],
+  }
+  $.ajax({
+    type: 'POST',
+    url: create,
+    crossDomain: true,
+    // The key needs to match your method's input parameter (case-sensitive).
+    data: JSON.stringify(payload),
+    beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization', 'Basic eXlkYWk6ZGVpc3Q5MjgxNw==');
+        xhr.setRequestHeader('Access-Control-Allow-Origin' , '*');
+        xhr.setRequestHeader('contentType', 'application/json; charset=utf-8');
+    },
+    dataType: 'json',
+    success: function(data){alert('create issue success');},
+    failure: function(errMsg) {
+        alert('create issue failed');
+    }
+});
+}
+
+console.log(\"total_count = \" + result.total_count);
+if(result.total_count == 1) {
+    var comments_url = result.items[0].comments_url;
+} else if (result.total_count == 0) {
+        // create a new issue
+    //create(title);
+} else {
+        // result not only
+        alert('Cannot load the comments.');
+}
+
+function loadComments(data) {
+    for (var i=0; i<data.length; i++) {
+      var cuser = data[i].user.login;
+      var cuserlink = 'https://' + repo + '/' + data[i].user.login;
+      var clink = comments_url + '#issuecomment-' + data[i].url.substring(data[i].url.lastIndexOf(\"/\")+1);
+      var cbody = data[i].body_html;
+      var cavatarlink = data[i].user.avatar_url;
+      var cdate = Date.parse(data[i].created_at).toString('yyyy-MM-dd HH:mm:ss');
+
+      var code = '<div class=\"comment\"><div class=\"commentheader\"><div class=\"commentgravatar\">' + '<img src=\"' + cavatarlink + '\" alt=\"\" width=\"20\" height=\"20\">' + '</div><a class=\"commentuser\" href=\\\"\"+ cuserlink + \"\\\">' + cuser + '</a><a class=\"commentdate\" href=\\\"\" + clink + \"\\\">' + cdate + '</a></div><div class=\"commentbody\">' + cbody + '</div></div>';
+
+      $('#comments').append(code);
+    }
+  }
+
+
+var comments_api = comments_url + '?per_page=100';
+console.log(\"comments api: \" + comments_api);
+$.ajax(comments_api, {
+    headers: {Accept: 'application/vnd.github.full+json'},
+    dataType: 'json',
+    success: function(msg){
+      loadComments(msg);
+   }
+  });
+
+
+</script>
+
+<hr />\n <div class='footer'>
 © 2017 yydai<br/>
 Email: dai92817@icloud.com
 </div>")
 
 
-
 ;; this code can clear the cache and will regenerate all the html files
-;; (setq org-publish-use-timestamps-flag nil)
+(setq org-publish-use-timestamps-flag nil)
 
 
 ;;; screen shot
@@ -442,11 +546,11 @@ same directory as the org-buffer and insert a link to this file."
         (call-process-shell-command "convert" nil nil nil nil (concat "\"" filename "\" -resize  \"50%\"" ) (concat "\"" filename "\"" ))
         ))
 
+  (setq relative-dir (concat "./imgs/" (file-name-nondirectory filename)))
   (if (file-exists-p filename)
-      (insert (concat "[[file:" filename "]]")))
+      (insert (concat "[[file:" relative-dir "]]")))
   (org-display-inline-images)
   )
-
 
 
 ;; The codes of blow are coming from this place:
@@ -475,16 +579,18 @@ same directory as the org-buffer and insert a link to this file."
                     path (or desc "video"))))))
 
 
-;; create a new blog
-;; if sub current dictionary, just input . or RETURN
-;; reference: https://www.emacswiki.org/emacs/InteractiveFunction
-;; and https://learnxinyminutes.com/docs/elisp/
-;; and http://ergoemacs.org/emacs/elisp_buffer_file_functions.html
-(defun new-blog (title &optional sub)
-  (interactive "sBlog title to show? \nsSubfolder is?")
+
+(defun nblog (title &optional dir)
+  "nblog is used to create a new blog in the default directory(~/workspace/blog/org/).
+And you should know it needs the blog name and the directory that to restore the file.
+reference: https://www.emacswiki.org/emacs/InteractiveFunction
+and https://learnxinyminutes.com/docs/elisp/
+and http://ergoemacs.org/emacs/elisp_buffer_file_functions.html"
+
+  (interactive "sBlog title to show? \nsDirectory is?")
   (setq base "~/workspace/blog/org/")
   (setq filename
-        (concat base sub  "/" title))
+        (concat base dir  "/" title))
   (if (file-exists-p filename)
       (find-file filename)
     (let ((buf (generate-new-buffer title)))

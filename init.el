@@ -12,6 +12,7 @@
 (setq package-enable-at-startup nil)
 
 (setq emacs-load-start-time (current-time))
+(setq gc-cons-threshold 100000000) ; ie 100mb, default is 800kb
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
@@ -132,6 +133,7 @@
 (require 'init-mouse)
 (disable-mouse-mode 1)
 (require 'init-blog)
+(require 'init-dashboard)
 ;; Extra packages which don't require any configuration
 
 (require-package 'gnuplot)

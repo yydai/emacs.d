@@ -3,7 +3,7 @@
 (define-minor-mode disable-mouse-mode
   "A minor-mode that disables all mouse keybinds."
   :global t
-  :lighter " 🐭"
+  :lighter "Mouse🐭"
   :keymap (make-sparse-keymap))
 
 (dolist (type '(mouse down-mouse drag-mouse

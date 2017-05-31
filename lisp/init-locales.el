@@ -210,11 +210,77 @@ on each side of cursor."
     (setq p1 (point))
     (skip-chars-forward "^\"")
     (setq p2 (point))
-
     (goto-char p1)
     (push-mark p2)
     (setq mark-active t)))
 
+
+;; let use type special char more quickly
+
+(defvar *unshifted-special-chars-layout*
+  '(                           ; from -> to
+    ("8" "%")
+    ("7" "&")
+    ("9" "-")
+    ("0" "=")
+
+    ("%" "8")
+    ("&" "7")
+    ("-" "9")
+    ("=" "0")))
+
+(defun mb-str-to-unibyte-char (s)
+  "Translate first multibyte char in s to internal unibyte representation."
+  (multibyte-char-to-unibyte (string-to-char s)))
+
+(defun remap-keyboard (mapping)
+  "Setup keyboard translate table using a list of pairwise key-mappings."
+  (mapcar
+   (lambda (mb-string-pair)
+     (apply #'keyboard-translate
+            (mapcar #'mb-str-to-unibyte-char mb-string-pair)))
+   mapping))
+
+(remap-keyboard *unshifted-special-chars-layout*)
+
+;; ==============
+(defadvice kill-ring-save (before slickcopy activate compile)
+  "When called interactively with no active region, copy a single line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+(defadvice kill-region (before slickcut activate compile)
+  "When called interactively with no active region, kill a single line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+
+(local-set-key "%" 'match-paren)
+
+(defun match-paren (arg)
+  "Go to the matching parenthesis if on parenthesis otherwise insert %."
+  (interactive "p")
+  (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+        ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+        (t (self-insert-command (or arg 1)))))
+
+
+
+
+(global-set-key (kbd "C-w") 'whole-line-or-region-kill-ring-save)
+(global-set-key (kbd "M-w") 'whole-line-or-region-kill-region)
+
+
+
+;; insert a link
+(defun link (name url)
+  (interactive "sLink name? \nsLink url?")
+  (setq strlink (concat "[[" url "][" name "]]"))
+  (insert strlink))
 
 (provide 'init-locales)
 ;;; init-locales.el ends here
