@@ -349,20 +349,26 @@ typical word processor."
   (org-babel-do-load-languages
    'org-babel-load-languages
    `(
+     (clojure . t)
+     (C . t)
      (ditaa . t)
      (dot . t)
      (ditaa . t)
-     (R . t)
-     (python . t)
-     (ruby . t)
+     (emacs-lisp . t)
      (gnuplot . t)
-     (clojure . t)
-     (shell . t)
-     (ledger . t)
      (http . t)
+     (ipython . t)
+     (js . t)
+     (ledger . t)
+     (latex . t)
      (org . t)
      (plantuml . t)
-     (latex . t)
+     (python . t)
+     (ruby . t)
+     (R . t)
+     (shell . t)
+     (sql . t)
+     (scheme . t)
      (sqlite . t))))
 
 ;;----------------------------------------------------------------------------------------------------
@@ -370,6 +376,7 @@ typical word processor."
 ;;----------------------------------------------------------------------------------------------------
 (require 'ox-publish)
 (require 'ox-html)
+
 
 (setq org-publish-project-alist
       '(
@@ -520,7 +527,7 @@ Email: dai92817@icloud.com
 
 
 ;; this code can clear the cache and will regenerate all the html files
-(setq org-publish-use-timestamps-flag nil)
+;; (setq org-publish-use-timestamps-flag nil)
 
 
 ;;; screen shot

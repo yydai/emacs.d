@@ -1,6 +1,5 @@
 ;;; Character sets
 
-
 ;;; Changing font sizes
 
 (require-package 'default-text-scale)
@@ -20,5 +19,8 @@ This is helpful for writeroom-mode, in particular."
           'sanityinc/maybe-adjust-visual-fill-column)
 
 
+
+(set-face-attribute 'default nil :font "PT Mono")
+(set-frame-font "PT Mono" nil t)
 
 (provide 'init-fonts)

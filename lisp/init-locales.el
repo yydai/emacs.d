@@ -282,5 +282,8 @@ on each side of cursor."
   (setq strlink (concat "[[" url "][" name "]]"))
   (insert strlink))
 
+
+(setq org-html-checkbox-type 'html)
+
 (provide 'init-locales)
 ;;; init-locales.el ends here
