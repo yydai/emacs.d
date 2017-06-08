@@ -26,7 +26,7 @@
         (if (equalp (file-name-nondirectory buffer-file-name) "index.org")
             (setq subpath "/index")
           (setq subpath (substring buffer-file-name (string-match-p
-                                                     "/[[:word:]_?]+/[[:word:]_?]+.org$"
+                                                     "/[[:word:]_?]+/[[:word:]-?]+.org$"
                                                      buffer-file-name) (- (length buffer-file-name) 4))))
         (setq url (format "http://%s:%d%s%s" "127.0.0.1" 8080 subpath ".html")))
 
@@ -72,5 +72,8 @@ and http://ergoemacs.org/emacs/elisp_buffer_file_functions.html"
       (message "Publish site failed. Please manually do this."))))
 
 
+(defun blog-site ()
+  (interactive)
+  (browse-url "https://yydai.github.io"))
 
 (provide 'init-blog)

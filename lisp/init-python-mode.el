@@ -30,6 +30,8 @@
 (require 'py-autopep8)
 (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 
+(add-hook 'python-mode-hook 'flycheck-mode)
+
 (elpy-enable)
 
 (provide 'init-python-mode)

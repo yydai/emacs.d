@@ -277,10 +277,9 @@ on each side of cursor."
 
 
 ;; insert a link
-(defun link (name url)
-  (interactive "sLink name? \nsLink url?")
-  (setq strlink (concat "[[" url "][" name "]]"))
-  (insert strlink))
+(defun link (link description)
+  (interactive "sLink:\nsDescription:")
+  (insert (concat "[[" link "][" description "]]")))
 
 
 (setq org-html-checkbox-type 'html)

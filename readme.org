@@ -1,0 +1,14 @@
+* My Personal Emacs Config
+
+
+** Org mode
+
+** Blog
+    - config
+    - create blog
+    - blog open
+    - blog preview
+    - blog publish
+
+
+** Locals set

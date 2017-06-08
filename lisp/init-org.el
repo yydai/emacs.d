@@ -586,29 +586,6 @@ same directory as the org-buffer and insert a link to this file."
                     path (or desc "video"))))))
 
 
-
-(defun nblog (title &optional dir)
-  "nblog is used to create a new blog in the default directory(~/workspace/blog/org/).
-And you should know it needs the blog name and the directory that to restore the file.
-reference: https://www.emacswiki.org/emacs/InteractiveFunction
-and https://learnxinyminutes.com/docs/elisp/
-and http://ergoemacs.org/emacs/elisp_buffer_file_functions.html"
-
-  (interactive "sBlog title to show? \nsDirectory is?")
-  (setq base "~/workspace/blog/org/")
-  (setq filename
-        (concat base dir  "/" title))
-  (if (file-exists-p filename)
-      (find-file filename)
-    (let ((buf (generate-new-buffer title)))
-      (switch-to-buffer buf)
-      (goto-char (point-min))
-      (insert (concat "#+TITLE: " "\n\n-------\n"))
-      (write-file filename)
-      (goto-char (+ (length "#+TITLE: ") 1))
-      )))
-
-
 ;; set org bullets
 ;; https://zhangda.wordpress.com/
 ;; https://github.com/sabof/org-bullets
