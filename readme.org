@@ -6,7 +6,7 @@
 	brew linkapps emacs
 	#+END_SRC
 
-	You can visit [[https://www.emacswiki.org/emacs/EmacsForMacOS#toc12][here]] for more detail.
+	You can visit [[https://www.emacswiki.org/emacs/EmacsForMacOS#toc12][here]] for more details.
 ** Org mode
 
 ** Blog
