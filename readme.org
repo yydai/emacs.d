@@ -13,8 +13,9 @@
 
 	This is an example:
 
-	[[http://or046838l.bkt.gdipper.com/image/ex1.png][Org file]]
-	[[http://or046838l.bkt.gdipper.com/image/ex2.png][preview]]
+	[[http://or046838l.bkt.gdipper.com/image/ex1.png]]
+
+	[[http://or046838l.bkt.gdipper.com/image/ex2.png]]
 
 ** Blog
     - config
