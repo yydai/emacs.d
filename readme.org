@@ -1,6 +1,12 @@
-* My Personal Emacs Config
+* My Personal Emacs
+** How to install Emacs on OSX
+	#+BEGIN_SRC shell
+	brew install --with-cocoa emacs
+	# finally link it to your Applications folder
+	brew linkapps emacs
+	#+END_SRC
 
-
+	You can visit [[https://www.emacswiki.org/emacs/EmacsForMacOS#toc12][here]] for more detail.
 ** Org mode
 
 ** Blog
@@ -9,6 +15,5 @@
     - blog open
     - blog preview
     - blog publish
-
 
 ** Locals set

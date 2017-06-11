@@ -284,5 +284,8 @@ on each side of cursor."
 
 (setq org-html-checkbox-type 'html)
 
+(add-hook 'before-save-hook
+          'delete-trailing-whitespace)
+
 (provide 'init-locales)
 ;;; init-locales.el ends here
