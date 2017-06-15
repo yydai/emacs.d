@@ -135,6 +135,8 @@
 (require 'init-blog)
 (require 'init-dashboard)
 ;; Extra packages which don't require any configuration
+(require 'init-macro)
+(require 'init-text-process)
 
 (require-package 'gnuplot)
 (require-package 'lua-mode)

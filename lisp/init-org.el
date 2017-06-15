@@ -592,5 +592,59 @@ same directory as the org-buffer and insert a link to this file."
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+
+
+;; http://kitchingroup.cheme.cmu.edu/blog/2015/07/10/Drag-images-and-files-onto-org-mode-and-insert-a-link-to-them/
+;; drag file to org mode
+(defun my-dnd-func (event)
+  (interactive "e")
+  (goto-char (nth 1 (event-start event)))
+  (x-focus-frame nil)
+  (let* ((payload (car (last event)))
+         (type (car payload))
+         (fname (cadr payload))
+         (img-regexp "\\(png\\|jp[e]?g\\|svg\\)\\>"))
+    (cond
+     ;; insert image link
+     ((and  (eq 'drag-n-drop (car event))
+            (eq 'file type)
+            (string-match img-regexp fname))
+      (dired-copy-file fname (format "./imgs/%s" (file-name-nondirectory fname)) t)
+      (insert (format "[[%s]]" (format "./imgs/%s" (file-name-nondirectory fname))))
+      (org-display-inline-images t t))
+     ;; insert image link with caption
+     ((and  (eq 's-drag-n-drop (car event))
+            (eq 'file type)
+            (string-match img-regexp fname))
+      (insert "#+ATTR_ORG: :width 300\n")
+      (insert (concat  "#+CAPTION: " (read-input "Caption: ") "\n"))
+      (insert (format "[[%s]]" fname))
+      (org-display-inline-images t t))
+     ;; C-drag-n-drop to open a file
+     ((and  (eq 's-drag-n-drop (car event))
+            (eq 'file type))
+      (find-file fname))
+     ((and (eq 'M-drag-n-drop (car event))
+           (eq 'file type))
+      (insert (format "[[attachfile:%s]]" fname)))
+     ;; regular drag and drop on file
+     ((eq 'file type)
+      (insert (format "[[%s]]\n" fname)))
+     (t
+      (error "I am not equipped for dnd on %s" payload)))))
+
+
+(define-key org-mode-map (kbd "<drag-n-drop>") 'my-dnd-func)
+(define-key org-mode-map (kbd "<s-drag-n-drop>") 'my-dnd-func)
+(define-key org-mode-map (kbd "<M-drag-n-drop>") 'my-dnd-func)
+
+
+;; insert github gist codes
+(defun insert-gist (link)
+  (interactive "sEmbed link is?")
+  (insert (format "#+BEGIN_EXPORT html
+	%s
+	#+END_EXPORT" link)))
+
 (provide 'init-org)
 ;;; init-org.el ends here

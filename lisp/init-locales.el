@@ -287,5 +287,11 @@ on each side of cursor."
 (add-hook 'before-save-hook
           'delete-trailing-whitespace)
 
+(which-key-mode)
+
+;; auto indent
+;; maybe use add-hook more better?
+(global-set-key (kbd "RET") 'newline-and-indent)
+
 (provide 'init-locales)
 ;;; init-locales.el ends here

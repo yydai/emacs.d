@@ -10,6 +10,7 @@
 
 ;; set the http server
 (setq httpd-root "~/workspace/blog/public_html/")
+(httpd-serve-directory httpd-root)
 (httpd-start)
 
 (defun blog-preview(&optional publish-current)
@@ -20,7 +21,6 @@
   (if publish-current (org-publish-current-file)
     (org-publish-all))
 
-  (httpd-serve-directory httpd-root)
   (if publish-current
       (progn
         (if (equalp (file-name-nondirectory buffer-file-name) "index.org")

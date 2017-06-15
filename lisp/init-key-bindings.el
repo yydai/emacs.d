@@ -16,7 +16,7 @@
   (define-key my-leader-key-map (kbd "f f") 'projectile-find-file)
   (define-key my-leader-key-map (kbd "f e") 'projectile-recentf)
   ;; begin with c(common)
-  (define-key my-leader-key-map (kbd "c s") 'my-org-screenshot)
+  (define-key my-leader-key-map (kbd "c s") #'my-org-screenshot)
   )
 
 (global-set-key (kbd "s-SPC") 'my-leader-key-map)
