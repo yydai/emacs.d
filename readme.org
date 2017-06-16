@@ -12,20 +12,16 @@
 	writing in this way.
 
 	There are many features:
-	- Screenshot
+    - Screenshot
     - Drag images file from local disk
     - Insert github gist
     - Insert Youtube link
-	- Set org mode bullets
+    - Set org mode bullets
     - Support org mode to html blog
 
 	| Keybinding  | command              | description                                |
 	|-------------+----------------------+--------------------------------------------|
 	| s-<SPC> c s | my-org-screenshot    | Take a screenshot into a time stamped file |
-	| s-<SPC> s ; | avy-goto-char        |                                            |
-	| s-<SPC> s d | dash-at-point        | Will look up the things in dash            |
-	| s-<SPC> s s | projectile-ag        | Use ag search                              |
-	| s-<SPC> f f | projectile-find-file | find file in project                       |
 	|             | insert-gist          | Insert embeded gist link                   |
 
 	You can insert a Youtube share like:
@@ -34,27 +30,19 @@
 	[[yt:share_id]]
 	#+END_SRC
 
-	This is an example about my writing using org mode:
-	[[http://or046838l.bkt.gdipper.com/image/ex1.png]]
-	[[http://or046838l.bkt.gdipper.com/image/ex2.png]]
-
 ** Blog
 	You can find my blog config in the /lisp/init-blog.el.
 
 	I often write my blog with the workflow of blow:
-	- With command *blog-create* to create a new blog.
+    - With command *blog-create* to create a new blog.
     - Enter the file name and the directory you want to store
-	- Enter the title of the blog you want to show
-	- Use command *blog-preview* to preview the current blog locally
+    - Enter the title of the blog you want to show
+    - Use command *blog-preview* to preview the current blog locally
     - If all things is ok, you can use command of *publish-site* .
 
 	You need write a *makefile* in your blog site file, because we'll use *make* to publish the site.
 
-	This is my makefile
-
-	#+BEGIN_EXPORT html
-	<script src="https://gist.github.com/yydai/18a9e5e80547dedb5195134a5a3832e9.js"></script>
-	#+END_EXPORT
+	This is my [[https://gist.github.com/yydai/18a9e5e80547dedb5195134a5a3832e9][makefile]].
 
 ** Some minor mode
 *** Disable mouse mode
