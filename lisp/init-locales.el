@@ -293,5 +293,8 @@ on each side of cursor."
 ;; maybe use add-hook more better?
 (global-set-key (kbd "RET") 'newline-and-indent)
 
+
+(setq-default desktop-load-locked-desktop t)
+
 (provide 'init-locales)
 ;;; init-locales.el ends here
