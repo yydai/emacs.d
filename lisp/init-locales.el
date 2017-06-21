@@ -166,7 +166,7 @@ Version 2017-02-10"
 (set-face-attribute 'default nil :font "Monaco-18" )
 (setq-default cursor-type 'bar)
 ;;; show the line number
-(global-linum-mode t)
+(global-nlinum-mode t)
 (nyan-mode t)
 
 (global-set-key (kbd "TAB") 'my-insert-tab-char) ; same as Ctrl+i
@@ -199,6 +199,17 @@ This command switches to browser."
     (browse-url (concat "http://en.wikipedia.org/wiki/" word))
     ;; (eww myUrl) ; emacs's own browser
     ))
+
+
+(defun google-this ()
+  "Googles a query or region if any."
+  (interactive)
+  (browse-url
+   (concat
+    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
+    (if mark-active
+        (buffer-substring (region-beginning) (region-end))
+      (read-string "Google: ")))))
 
 
 (defun my-select-inside-quotes ()

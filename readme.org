@@ -71,12 +71,16 @@
 
    The prefix key is *s-<SPC>*. In this place, *s* is *command* key on MAC.
 
-	| keybinding  | command              | description                                |
-	|-------------+----------------------+--------------------------------------------|
-	| s-<SPC> s ; | avy-goto-char        |                                            |
-	| s-<SPC> s d | dash-at-point        | Will look up the things in dash            |
-	| s-<SPC> s s | projectile-ag        | Use ag search                              |
-	| s-<SPC> f f | projectile-find-file | find file in project                       |
+	| keybinding  | command              | description                     |
+	|-------------+----------------------+---------------------------------|
+	| s-<SPC> s ; | avy-goto-char        |                                 |
+	| s-<SPC> s d | dash-at-point        | Will look up the things in dash |
+	| s-<SPC> s s | projectile-ag        | Use ag search                   |
+	| s-<SPC> f f | projectile-find-file | Find file in project            |
+	| C-;         | ace-jump-char-mode   | Jump to the char                |
+	| C-,         | ace-jump-line-mode   | Jump to some line               |
+	|-------------+----------------------+---------------------------------|
+
 
 ** Locals set
 

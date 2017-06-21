@@ -410,7 +410,8 @@ typical word processor."
 ;; add jquery support
 (setq org-html-head-extra
       "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<link rel='stylesheet' href='../css/worg2.css' typbe='text/css'/>")
+<link rel='stylesheet' href='../css/worg2.css' typbe='text/css'/>
+<link rel='shortcut icon' type='image/x-icon' href='favicon.ico'>")
 
 (setq org-html-preamble "
 <div class='nav'>
@@ -527,8 +528,8 @@ Email: dai92817@icloud.com
 
 
 ;; this code can clear the cache and will regenerate all the html files
+;;
 ;; (setq org-publish-use-timestamps-flag nil)
-
 
 ;;; screen shot
 ;;; https://emacs-china.org/t/org-mode/79
