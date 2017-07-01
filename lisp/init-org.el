@@ -388,11 +388,6 @@ typical word processor."
          :publishing-function org-html-publish-to-html
          :headline-levels 4
          :section-numbers nil
-
-         :auto-sitemap t
-         :sitemap-filename "sitemap.org"
-         :sitemap-title "Sitemap"
-
          :html-mathjax-template "<script type=\"text/javascript\" async src=\"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML\"></script>"
          )
         ("blog-static"
@@ -411,7 +406,7 @@ typical word processor."
 (setq org-html-head-extra
       "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
 <link rel='stylesheet' href='../css/worg2.css' typbe='text/css'/>
-<link rel='shortcut icon' type='image/x-icon' href='favicon.ico'>")
+<link rel='shortcut icon' type='image/x-icon' href='/favicon.ico'>")
 
 (setq org-html-preamble "
 <div class='nav'>
@@ -428,7 +423,7 @@ var base_url = 'https://api.github.com';
 var title = document.title;
 var owner = 'yydai';
 var repo = 'yydai.github.io';
-var search_issues = base_url + '/search/issues?q=' + title + '+user:' + owner + '+label:blog';
+var search_issues = base_url + '/search/issues?q=' + title + '+user:' + owner + '+label:blog'+ '+state:open';
 
 console.log(\"search_issues = \"+ search_issues);
 
@@ -456,30 +451,19 @@ if(jQuery.isEmptyObject(items)) {
 
 
 function create(title) {
-    var creare = base_url + '/repos/' + owner + '/' + repo + '/issues';
-  var payload = {
-          'title': title,
-      'body': 'You can write comments in this issues.',
-      'labels': ['blog'],
-  }
-  $.ajax({
-    type: 'POST',
-    url: create,
-    crossDomain: true,
-    // The key needs to match your method's input parameter (case-sensitive).
-    data: JSON.stringify(payload),
-    beforeSend: function(xhr) {
-        xhr.setRequestHeader('Authorization', 'Basic eXlkYWk6ZGVpc3Q5MjgxNw==');
-        xhr.setRequestHeader('Access-Control-Allow-Origin' , '*');
-        xhr.setRequestHeader('contentType', 'application/json; charset=utf-8');
-    },
-    dataType: 'json',
-    success: function(data){alert('create issue success');},
-    failure: function(errMsg) {
-        alert('create issue failed');
-    }
-});
+	var create_url = 'https://blog-api-server.herokuapp.com/issues?title=' + title + '&labels=blog&body=Welcome to leave comments here.&owner=yydai&repo=yydai.github.io&auth=eXlkYWk6ZGVpc3Q5MjgxNw=='
+
+	jQuery.ajax({
+      type: 'GET',
+      async: false,
+      dataType:'json',
+      url: create_url,
+      success:function(data) {
+         result = data;
+      }
+  });
 }
+
 
 console.log(\"total_count = \" + result.total_count);
 if(result.total_count == 1) {
@@ -527,10 +511,9 @@ Email: dai92817@icloud.com
 </div>")
 
 
-;; this code can clear the cache and will regenerate all the html files
-;;
-;; (setq org-publish-use-timestamps-flag nil)
 
+;; this code can clear the cache and will regenerate all the html files
+;; (setq org-publish-use-timestamps-flag nil)
 ;;; screen shot
 ;;; https://emacs-china.org/t/org-mode/79
 (defun my-org-screenshot ()
@@ -560,6 +543,23 @@ same directory as the org-buffer and insert a link to this file."
   (org-display-inline-images)
   )
 
+
+;; 下面解决使用 M-q 自动断行，会有空格的问题
+(defun clear-single-linebreak-in-cjk-string (string)
+  "clear single line-break between cjk characters that is usually soft line-breaks"
+  (let* ((regexp "\\([\u4E00-\u9FA5]\\)\n\\([\u4E00-\u9FA5]\\)")
+         (start (string-match regexp string)))
+    (while start
+      (setq string (replace-match "\\1\\2" nil nil string)
+            start (string-match regexp string start))))
+  string)
+
+(defun ox-html-clear-single-linebreak-for-cjk (string backend info)
+  (when (org-export-derived-backend-p backend 'html)
+    (clear-single-linebreak-in-cjk-string string)))
+
+(add-to-list 'org-export-filter-final-output-functions
+             'ox-html-clear-single-linebreak-for-cjk)
 
 ;; The codes of blow are coming from this place:
 ;; http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
@@ -646,6 +646,8 @@ same directory as the org-buffer and insert a link to this file."
   (insert (format "#+BEGIN_EXPORT html
 	%s
 	#+END_EXPORT" link)))
+
+(add-hook 'org-mode-hook #'xah-math-input-mode-on)
 
 (provide 'init-org)
 ;;; init-org.el ends here

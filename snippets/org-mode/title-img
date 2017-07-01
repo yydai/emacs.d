@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: title of image
+# key: tig
+# --
+#+CAPTION: $1
+#+NAME: $2

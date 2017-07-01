@@ -307,5 +307,21 @@ on each side of cursor."
 
 (setq-default desktop-load-locked-desktop t)
 
+
+
+;; remap company select from Meta ⇒ Ctrl
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "M-n") nil)
+  (define-key company-active-map (kbd "M-p") nil)
+  (define-key company-active-map (kbd "C-n") #'company-select-next)
+  (define-key company-active-map (kbd "C-p") #'company-select-previous))
+
+;; https://www.reddit.com/r/emacs/comments/5jvawj/select_the_company_completion_candidate_by/
+;; Select the company completion candidate by pressing 0-9
+(let ((map company-active-map))
+  (mapc (lambda (x) (define-key map (format "%d" x)
+                 `(lambda () (interactive) (company-complete-number ,x))))
+        (number-sequence 0 9)))
+
 (provide 'init-locales)
 ;;; init-locales.el ends here
