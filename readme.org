@@ -108,3 +108,5 @@
 
 **** Switch the key bindings for *C-w* and *M-w*.
 	 I will use the *C-w* for copy and *M-w* for cut.
+
+** issues
