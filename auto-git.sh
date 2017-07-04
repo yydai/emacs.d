@@ -1,7 +1,7 @@
 git add .
 read -p "Commit description, default is 'Auto commit': " desc
 
-if [ -z $desc ]; then
+if [ -z "$desc" ]; then
     desc="Auto commit"
 fi
 
