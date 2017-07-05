@@ -323,5 +323,18 @@ on each side of cursor."
                  `(lambda () (interactive) (company-complete-number ,x))))
         (number-sequence 0 9)))
 
+
+;; config deft for blog
+(setq deft-extension "org")
+(setq deft-directory "~/workspace/blog/org")
+(setq deft-text-mode 'org-mode)
+(setq deft-recursive t)
+
+
+;; auto add space between Chinese and English
+(require 'pangu-spacing)
+(global-pangu-spacing-mode 1)
+(setq pangu-spacing-real-insert-separtor t)
+
 (provide 'init-locales)
 ;;; init-locales.el ends here

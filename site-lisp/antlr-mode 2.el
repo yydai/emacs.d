@@ -3026,5 +3026,8 @@ It is probably better to automatically deduce the TAB setting."
         (python-indent-line (eq this-command 'antlr-indent-command))))))
 
 
+(autoload 'antlr-v4-mode "antlr-mode" nil t)
+(push '("\\.g4\\'" . antlr-v4-mode) auto-mode-alist)
+
 (provide 'antlr-mode)
 ;;; antlr-mode.el ends here
