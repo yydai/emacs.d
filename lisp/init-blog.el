@@ -49,7 +49,7 @@ and http://ergoemacs.org/emacs/elisp_buffer_file_functions.html"
   (interactive "sBlog title to show? \nsDirectory is?")
   (setq base "~/workspace/blog/org/")
   (setq filename
-        (concat base dir  "/" title))
+        (concat base dir  "/" title ".org"))
   (if (file-exists-p filename)
       (find-file filename)
     (let ((buf (generate-new-buffer title)))

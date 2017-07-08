@@ -411,7 +411,7 @@ typical word processor."
 (setq org-html-preamble "
 <div class='nav'>
 <div class='blog' style='text-align:right'>
-<a href='/index.html'> Home </a> | <a href='/contact.html'> Contact </a>
+<a href='/index.html'> Home </a> | <a href='/contact.html'> About </a>
 </div>
 </div>")
 
@@ -539,7 +539,7 @@ same directory as the org-buffer and insert a link to this file."
 
   (setq relative-dir (concat "./imgs/" (file-name-nondirectory filename)))
   (if (file-exists-p filename)
-      (insert (concat "[[file:" relative-dir "]]")))
+      (insert (concat "#+ATTR_HTML: :width 100%\n[[file:" relative-dir "]]")))
   (org-display-inline-images)
   )
 
@@ -611,6 +611,7 @@ same directory as the org-buffer and insert a link to this file."
             (eq 'file type)
             (string-match img-regexp fname))
       (dired-copy-file fname (format "./imgs/%s" (file-name-nondirectory fname)) t)
+      (insert "#+ATTR_HTML: :width 100%\n")
       (insert (format "[[%s]]" (format "./imgs/%s" (file-name-nondirectory fname))))
       (org-display-inline-images t t))
      ;; insert image link with caption
