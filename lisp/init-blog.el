@@ -39,6 +39,16 @@
   (httpd-stop))
 
 
+(defun auto-sequence (format start end)
+  (interactive "sSequence format is? \nnEnter start number: \nnEnter end number:")
+  (progn
+    (kmacro-set-format format)
+    (kmacro-set-counter start)
+    (while (< start (+ 1 end))
+      (execute-kbd-macro (read-kbd-macro "<f3> RET"))
+      (setq start (+ 1 start)))
+    ))
+
 (defun blog-create (title &optional dir)
   "nblog is used to create a new blog in the default directory(~/workspace/blog/org/).
 And you should know it needs the blog name and the directory that to restore the file.

@@ -1,9 +1,6 @@
 (fset 'indent-code
       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 tab S-right] 0 "%d")) arg)))
 
-(provide 'init-macro)
-
-
 
 (fset 'select-current-line
       [?\C-a ?\C-. ?\C-e])
@@ -20,3 +17,9 @@
 
 (fset 'copy-current-line
       [?\C-a ?\C-. ?\C-e ?\C-w])
+
+
+(fset 'insert-sequence
+      [f3 return])
+
+(provide 'init-macro)
