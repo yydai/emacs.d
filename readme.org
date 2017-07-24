@@ -44,7 +44,7 @@
 
 	This is my [[https://gist.github.com/yydai/18a9e5e80547dedb5195134a5a3832e9][makefile]].
 
-** Some minor mode
+** Some minor modes
 *** Disable mouse mode
 	This mode is default open, so you can't use mouse in Emacs.
 
