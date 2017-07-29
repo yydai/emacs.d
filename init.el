@@ -1,6 +1,6 @@
 
 ;;; This file bootstraps the configuration, which is divided into
-;;; a number of other files.
+;;; a number of other files
 
 (package-initialize)
 
