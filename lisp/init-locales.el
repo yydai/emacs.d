@@ -33,7 +33,7 @@
 
 (defun ydai-run-current-file ()
   "Execute the current file.
-For example, if the current buffer is x.py, then it'll call 「python x.py」 in a shell. Output is printed to message buffer.
+For example, if the current buffer is x.py, then it'll call「python x.py」in a shell. Output is printed to message buffer.
 The file can be Emacs Lisp, PHP, Perl, Python, Ruby, JavaScript, TypeScript, Bash, Ocaml, Visual Basic, TeX, Java, Clojure.
 File suffix is used to determine what program to run.
 
@@ -336,5 +336,42 @@ on each side of cursor."
 (global-pangu-spacing-mode 1)
 (setq pangu-spacing-real-insert-separtor t)
 
+
+(defun prelude-search (query-url prompt)
+  "Open the search url constructed with the QUERY-URL.
+PROMPT sets the `read-string prompt."
+  (browse-url
+   (concat query-url
+           (url-hexify-string
+            (if mark-active
+                (buffer-substring (region-beginning) (region-end))
+              (read-string prompt))))))
+
+(defmacro prelude-install-search-engine (search-engine-name search-engine-url search-engine-prompt)
+  "Given some information regarding a search engine, install the interactive command to search through them"
+  `(defun ,(intern (format "prelude-%s" search-engine-name)) ()
+     ,(format "Search %s with a query or region if any." search-engine-name)
+     (interactive)
+     (prelude-search ,search-engine-url ,search-engine-prompt)))
+
+
+(prelude-install-search-engine "google"     "http://www.google.com/search?q="              "Google: ")
+(prelude-install-search-engine "youtube"    "http://www.youtube.com/results?search_query=" "Search YouTube: ")
+(prelude-install-search-engine "github"     "https://github.com/search?q="                 "Search GitHub: ")
+
+
+(defun window-half-height ()
+  (max 1 (/ (1- (window-height (selected-window))) 2)))
+
+(defun scroll-up-half ()
+  (interactive)
+  (scroll-up (window-half-height)))
+
+(defun scroll-down-half ()
+  (interactive)
+  (scroll-down (window-half-height)))
+
+(global-set-key (kbd "C-v") 'scroll-up-half)
+(global-set-key (kbd "M-v") 'scroll-down-half)
 (provide 'init-locales)
 ;;; init-locales.el ends here

@@ -339,7 +339,12 @@ typical word processor."
 ;;                 (insert (match-string 0))))))
 
 
+
+;; disable keybinding for org mode
+
+
 (after-load 'org
+  (define-key org-mode-map (kbd "C-,") nil)
   (define-key org-mode-map (kbd "C-M-<up>") 'org-up-element)
   (when *is-a-mac*
     (define-key org-mode-map (kbd "M-h") nil)
@@ -386,7 +391,7 @@ typical word processor."
          :publishing-directory "~/workspace/blog/public_html/"
          :recursive t
          :publishing-function org-html-publish-to-html
-         :headline-levels 4
+         :headline-levels 2
          :section-numbers nil
          :html-mathjax-template "<script type=\"text/javascript\" async src=\"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML\"></script>"
          )
