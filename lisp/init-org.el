@@ -397,7 +397,7 @@ typical word processor."
          )
         ("blog-static"
          :base-directory "~/workspace/blog/org/"
-         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|jpeg"
          :publishing-directory "~/workspace/blog/public_html/"
          :recursive t
          :publishing-function org-publish-attachment
