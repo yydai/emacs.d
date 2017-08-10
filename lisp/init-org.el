@@ -482,15 +482,17 @@ if(result.total_count == 1) {
 }
 
 function loadComments(data) {
+	repo = 'github.com'
     for (var i=0; i<data.length; i++) {
       var cuser = data[i].user.login;
       var cuserlink = 'https://' + repo + '/' + data[i].user.login;
-      var clink = comments_url + '#issuecomment-' + data[i].url.substring(data[i].url.lastIndexOf(\"/\")+1);
       var cbody = data[i].body_html;
       var cavatarlink = data[i].user.avatar_url;
       var cdate = Date.parse(data[i].created_at).toString('yyyy-MM-dd HH:mm:ss');
 
-      var code = '<div class=\"comment\"><div class=\"commentheader\"><div class=\"commentgravatar\">' + '<img src=\"' + cavatarlink + '\" alt=\"\" width=\"20\" height=\"20\">' + '</div><a class=\"commentuser\" href=\\\"\"+ cuserlink + \"\\\">' + cuser + '</a><a class=\"commentdate\" href=\\\"\" + clink + \"\\\">' + cdate + '</a></div><div class=\"commentbody\">' + cbody + '</div></div>';
+	  var html_url = items.html_url + '#issuecomment-' + data[i].url.substring(data[i].url.lastIndexOf('/')+1);
+
+      var code = '<div class=\"comment\"><div class=\"commentheader\"><div class=\"commentgravatar\">' + '<img src=\"' + cavatarlink + '\" alt=\"\" width=\"20\" height=\"20\">' + '</div><a class=\"commentuser\" href=\"'+ cuserlink + '\">' + cuser + '</a><a class=\"commentdate\" href=\"' + html_url + '\">' + cdate + '</a></div><div class=\"commentbody\">' + cbody + '</div></div>';
 
       $('#comments').append(code);
     }

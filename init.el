@@ -136,7 +136,7 @@
 ;; Extra packages which don't require any configuration
 (require 'init-macro)
 (require 'init-text-process)
-
+(require 'init-multi-term)
 (require-package 'gnuplot)
 (require-package 'lua-mode)
 (require-package 'htmlize)
