@@ -611,7 +611,7 @@ same directory as the org-buffer and insert a link to this file."
   (let* ((payload (car (last event)))
          (type (car payload))
          (fname (cadr payload))
-         (img-regexp "\\(png\\|jp[e]?g\\|svg\\)\\>"))
+         (img-regexp "\\(png\\|jp[e]?g\\|svg\\|gif\\)\\>"))
     (cond
      ;; insert image link
      ((and  (eq 'drag-n-drop (car event))

@@ -228,21 +228,24 @@ on each side of cursor."
 
 ;; let use type special char more quickly
 
-(defvar *unshifted-special-chars-layout*
-  '(                           ; from -> to
-    ("8" "%")
-    ("7" "&")
-    ("9" "-")
-    ("0" "=")
 
-    ("%" "8")
-    ("&" "7")
-    ("-" "9")
-    ("=" "0")))
+(defvar *unshifted-special-chars-layout*
+  '(                                    ; from -> to
+    ;; ("8" "%")
+    ;; ("7" "&")
+    ;; ("9" "-")
+    ;; ("0" "=")
+
+    ;; ("%" "8")
+    ;; ("&" "7")
+    ;; ("-" "9")
+    ;; ("=" "0")
+    ))
 
 (defun mb-str-to-unibyte-char (s)
   "Translate first multibyte char in s to internal unibyte representation."
   (multibyte-char-to-unibyte (string-to-char s)))
+
 
 (defun remap-keyboard (mapping)
   "Setup keyboard translate table using a list of pairwise key-mappings."
@@ -373,5 +376,12 @@ PROMPT sets the `read-string prompt."
 
 (global-set-key (kbd "C-v") 'scroll-up-half)
 (global-set-key (kbd "M-v") 'scroll-down-half)
+
+;; exchange the meta and command on mac os
+;; only change the key on Mac OX
+(when (eq system-type 'darwin)
+  (setq mac-option-modifier 'super)
+  (setq mac-command-modifier 'meta))
+
 (provide 'init-locales)
 ;;; init-locales.el ends here
