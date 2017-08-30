@@ -53,12 +53,31 @@
     (put 'yd-toggle-test 'state "beginning"))
    ))
 
+
+(defun toggle-find-file ()
+  (interactive)
+  (if  (not (string= "-" (projectile-project-name)))
+      (put 'toggle-find-file 'state t)
+    (put 'toggle-find-file 'state nil))
+
+  (if (get 'toggle-find-file 'state)
+      (progn
+        (call-interactively 'projectile-find-file)
+        (if  (not (string= "-" (projectile-project-name)))
+            (put 'toggle-find-file 'state nil))
+        )
+    (progn
+      (call-interactively 'projectile-find-file-in-known-projects)
+      (put 'toggle-find-file 'state t)))
+  )
+
+
 ;; Use minor mode for override key bindings
 ;; this is coming from here: https://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
     ;; C-x C-f was binded to counsel-find-file
-    (define-key map (kbd "C-x C-f") 'projectile-find-file-in-known-projects)
+    (define-key map (kbd "C-c C-f") 'toggle-find-file)
     (define-key map (kbd "C-x b") 'helm-buffers-list)
     (define-key map (kbd "C-a") 'yd-move-indent)
     map)
