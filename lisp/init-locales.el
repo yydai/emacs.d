@@ -379,9 +379,9 @@ PROMPT sets the `read-string prompt."
 
 ;; exchange the meta and command on mac os
 ;; only change the key on Mac OX
-(when (eq system-type 'darwin)
-  (setq mac-option-modifier 'super)
-  (setq mac-command-modifier 'meta))
+;; (when (eq system-type 'darwin)
+;;   (setq mac-option-modifier 'super)
+;;   (setq mac-command-modifier 'meta))
 
 (provide 'init-locales)
 ;;; init-locales.el ends here

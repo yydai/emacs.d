@@ -2,6 +2,20 @@
 (require 'browse-url)
 
 
+(defmacro define-background-function-wrapper (bg-function fn)
+  (let ((is-loading-sym (intern (concat "*" (symbol-name bg-function) "-is-loading*"))))
+    `(progn
+       (defvar ,is-loading-sym nil)
+       (defun ,bg-function ()
+         (interactive)
+         (when ,is-loading-sym
+           (message ,(concat (symbol-name fn) " is already loading")))
+         (setq ,is-loading-sym t)
+         (make-thread (lambda ()
+                        (unwind-protect
+                            (,fn)
+                          (setq ,is-loading-sym nil))))))))
+
 (defun blog-open ()
   (interactive)
   (setq base "~/workspace/blog/org/index.org")
