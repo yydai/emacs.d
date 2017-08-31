@@ -118,7 +118,6 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 (global-set-key "\M-c" 'toggle-letter-case)
 
 
-
 ;; symbol-overlay
 (global-set-key (kbd "M-i") 'symbol-overlay-put)
 (global-set-key (kbd "M-n") 'symbol-overlay-switch-forward)

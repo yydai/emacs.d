@@ -382,6 +382,10 @@ PROMPT sets the `read-string prompt."
 ;; (when (eq system-type 'darwin)
 ;;   (setq mac-option-modifier 'super)
 ;;   (setq mac-command-modifier 'meta))
+<<<<<<< HEAD
+=======
+
+>>>>>>> Add some new features
 
 
 (provide 'init-locales)
