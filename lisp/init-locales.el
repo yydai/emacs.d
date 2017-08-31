@@ -383,5 +383,7 @@ PROMPT sets the `read-string prompt."
 ;;   (setq mac-option-modifier 'super)
 ;;   (setq mac-command-modifier 'meta))
 
+
 (provide 'init-locales)
+
 ;;; init-locales.el ends here
