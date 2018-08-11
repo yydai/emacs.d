@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: cs
+# key: cs
+
+# --
+\begin{minted}[
+    frame=lines,
+    framesep=1mm,
+    baselinestretch=0.1,
+    fontsize=\footnotesize,
+    linenos]{python}

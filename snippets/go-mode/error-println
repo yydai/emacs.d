@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: error println
+# key: errpl
+# --
+if err != nil {
+	fmt.println($0)
+    $1
+}

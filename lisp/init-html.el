@@ -7,7 +7,8 @@
   (add-hook 'sgml-mode-hook (lambda () (tagedit-mode 1))))
 
 (add-auto-mode 'html-mode "\\.\\(jsp\\|tmpl\\)\\'")
-
+(add-auto-mode 'web-mode "\\.\\(vue\\|html\\)\\'")
+(add-hook 'web-mode-hook 'zencoding-mode)
 ;; Note: ERB is configured in init-ruby-mode
 
 (provide 'init-html)

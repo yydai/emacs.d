@@ -13,32 +13,8 @@
       org-export-kill-product-buffer-when-displayed t
       org-tags-column 80)
 
-
+
 ;; Lots of stuff from http://doc.norang.ca/org-mode.html
-
-(defun sanityinc/grab-ditaa (url jar-name)
-  "Download URL and extract JAR-NAME as `org-ditaa-jar-path'."
-  ;; TODO: handle errors
-  (message "Grabbing " jar-name " for org.")
-  (let ((zip-temp (make-temp-name "emacs-ditaa")))
-    (unwind-protect
-        (progn
-          (when (executable-find "unzip")
-            (url-copy-file url zip-temp)
-            (shell-command (concat "unzip -p " (shell-quote-argument zip-temp)
-                                   " " (shell-quote-argument jar-name) " > "
-                                   (shell-quote-argument org-ditaa-jar-path)))))
-      (when (file-exists-p zip-temp)
-        (delete-file zip-temp)))))
-
-(after-load 'ob-ditaa
-  (unless (and (boundp 'org-ditaa-jar-path)
-               (file-exists-p org-ditaa-jar-path))
-    (let ((jar-name "ditaa0_9.jar")
-          (url "http://jaist.dl.sourceforge.net/project/ditaa/ditaa/0.9/ditaa0_9.zip"))
-      (setq org-ditaa-jar-path (expand-file-name jar-name (file-name-directory user-init-file)))
-      (unless (file-exists-p org-ditaa-jar-path)
-        (sanityinc/grab-ditaa url jar-name)))))
 
 
 
@@ -77,272 +53,7 @@ typical word processor."
 
 (setq org-support-shift-select t)
 
-;;; Capturing
-
-(global-set-key (kbd "C-c c") 'org-capture)
-
-
-
-(setq org-capture-templates
-      `(("t" "todo" entry (file "")  ; "" => org-default-notes-file
-         "* NEXT %?\n%U\n" :clock-resume t)
-        ("n" "note" entry (file "")
-         "* %? :NOTE:\n%U\n%a\n" :clock-resume t)
-        ))
-
-;;; my own settings
-
-
-
-
-;;; Refiling
-
-(setq org-refile-use-cache nil)
-
-; Targets include this file and any file contributing to the agenda - up to 5 levels deep
-(setq org-refile-targets '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5)))
-
-(after-load 'org-agenda
-  (add-to-list 'org-agenda-after-show-hook 'org-show-entry))
-
-;; Exclude DONE state tasks from refile targets
-(defun sanityinc/verify-refile-target ()
-  "Exclude todo keywords with a done state from refile targets."
-  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-(setq org-refile-target-verify-function 'sanityinc/verify-refile-target)
-
-(defun sanityinc/org-refile-anywhere (&optional goto default-buffer rfloc msg)
-  "A version of `org-refile' which allows refiling to any subtree."
-  (interactive "P")
-  (let ((org-refile-target-verify-function))
-    (org-refile goto default-buffer rfloc msg)))
-
-(defun sanityinc/org-agenda-refile-anywhere (&optional goto rfloc no-update)
-  "A version of `org-agenda-refile' which allows refiling to any subtree."
-  (interactive "P")
-  (let ((org-refile-target-verify-function))
-    (org-agenda-refile goto rfloc no-update)))
-
-;; Targets start with the file name - allows creating level 1 tasks
-;;(setq org-refile-use-outline-path (quote file))
-(setq org-refile-use-outline-path t)
-(setq org-outline-path-complete-in-steps nil)
-
-;; Allow refile to create parent tasks with confirmation
-(setq org-refile-allow-creating-parent-nodes 'confirm)
-
-
-;;; To-do settings
-(setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "PROJECT(p)" "|" "DONE(d!/!)" "CANCELLED(c@/!)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
-(setq org-todo-keyword-faces
-      (quote (("TODO" :foreground "red" :weight bold)
-              ("NEXT" :foreground "blue" :weight bold)
-              ("DONE" :foreground "forest green" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
-              ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("MEETING" :foreground "forest green" :weight bold)
-              ("PHONE" :foreground "forest green" :weight bold))))
-
-;; Changing a task state is done with C-c C-t KEY
-;; where KEY is the appropriate fast todo state selection key as defined in org-todo-keywords.
-(setq org-use-fast-todo-selection t)
-
-(setq org-todo-state-tags-triggers
-      (quote (("CANCELLED" ("CANCELLED" . t))
-              ("WAITING" ("WAITING" . t))
-              ("HOLD" ("WAITING") ("HOLD" . t))
-              (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-
-;;; Adding New Tasks Quickly with Org Capture
-;;; This will replace the "remember"
-
-
-;;; Agenda views
-
-
-
-(let ((active-project-match "-INBOX/PROJECT"))
-
-  (setq org-stuck-projects
-        `(,active-project-match ("NEXT")))
-
-  (setq org-agenda-compact-blocks t
-        org-agenda-sticky t
-        org-agenda-start-on-weekday nil
-        org-agenda-span 'day
-        org-agenda-include-diary nil
-        org-agenda-sorting-strategy
-        '((agenda habit-down time-up user-defined-up effort-up category-keep)
-          (todo category-up effort-up)
-          (tags category-up effort-up)
-          (search category-up))
-        org-agenda-window-setup 'current-window
-        org-agenda-custom-commands
-        `(("N" "Notes" tags "NOTE"
-           ((org-agenda-overriding-header "Notes")
-            (org-tags-match-list-sublevels t)))
-          ("g" "GTD"
-           ((agenda "" nil)
-            (tags "INBOX"
-                  ((org-agenda-overriding-header "Inbox")
-                   (org-tags-match-list-sublevels nil)))
-            (stuck ""
-                   ((org-agenda-overriding-header "Stuck Projects")
-                    (org-agenda-tags-todo-honor-ignore-options t)
-                    (org-tags-match-list-sublevels t)
-                    (org-agenda-todo-ignore-scheduled 'future)))
-            (tags-todo "-INBOX/NEXT"
-                       ((org-agenda-overriding-header "Next Actions")
-                        (org-agenda-tags-todo-honor-ignore-options t)
-                        (org-agenda-todo-ignore-scheduled 'future)
-                        ;; TODO: skip if a parent is WAITING or HOLD
-                        (org-tags-match-list-sublevels t)
-                        (org-agenda-sorting-strategy
-                         '(todo-state-down effort-up category-keep))))
-            (tags-todo ,active-project-match
-                       ((org-agenda-overriding-header "Projects")
-                        (org-tags-match-list-sublevels t)
-                        (org-agenda-sorting-strategy
-                         '(category-keep))))
-            (tags-todo "-INBOX/-NEXT"
-                       ((org-agenda-overriding-header "Orphaned Tasks")
-                        (org-agenda-tags-todo-honor-ignore-options t)
-                        (org-agenda-todo-ignore-scheduled 'future)
-                        ;; TODO: skip if a parent is a project
-                        (org-agenda-skip-function
-                         '(lambda ()
-                            (or (org-agenda-skip-subtree-if 'todo '("PROJECT" "HOLD" "WAITING" "DELEGATED"))
-                                (org-agenda-skip-subtree-if 'nottododo '("TODO")))))
-                        (org-tags-match-list-sublevels t)
-                        (org-agenda-sorting-strategy
-                         '(category-keep))))
-            (tags-todo "/WAITING"
-                       ((org-agenda-overriding-header "Waiting")
-                        (org-agenda-tags-todo-honor-ignore-options t)
-                        (org-agenda-todo-ignore-scheduled 'future)
-                        (org-agenda-sorting-strategy
-                         '(category-keep))))
-            (tags-todo "/DELEGATED"
-                       ((org-agenda-overriding-header "Delegated")
-                        (org-agenda-tags-todo-honor-ignore-options t)
-                        (org-agenda-todo-ignore-scheduled 'future)
-                        (org-agenda-sorting-strategy
-                         '(category-keep))))
-            (tags-todo "-INBOX/HOLD"
-                       ((org-agenda-overriding-header "On Hold")
-                        ;; TODO: skip if a parent is WAITING or HOLD
-                        (org-tags-match-list-sublevels nil)
-                        (org-agenda-sorting-strategy
-                         '(category-keep))))
-            ;; (tags-todo "-NEXT"
-            ;;            ((org-agenda-overriding-header "All other TODOs")
-            ;;             (org-match-list-sublevels t)))
-            )))))
-
-
-(add-hook 'org-agenda-mode-hook 'hl-line-mode)
-
-
-;;; Org clock
-
-;; Save the running clock and all clock history when exiting Emacs, load it on startup
-
-
-
-
-;;; Show the clocked-in task - if any - in the header line
-
-
-
-
-
-
-;; Remove empty LOGBOOK drawers on clock out
-
-;; TODO: warn about inconsistent items, e.g. TODO inside non-PROJECT
-;; TODO: nested projects!
-
-
-
-;;; Archiving
-
-(setq org-archive-mark-done nil)
-(setq org-archive-location "%s_archive::* Archive")
-
-
-
-
-
-(require-package 'org-pomodoro)
-(setq org-pomodoro-keep-killed-pomodoro-time t)
-(after-load 'org-agenda
-  (define-key org-agenda-mode-map (kbd "P") 'org-pomodoro)
-  (define-key org-agenda-mode-map "\C-n" 'next-line)
-  (define-key org-agenda-keymap "\C-n" 'next-line)
-  (define-key org-agenda-mode-map "\C-p" 'previous-line)
-  (define-key org-agenda-keymap "\C-p" 'previous-line))
-
-
-;;;=====================
-
-;;;=====================
-(require 'remember)
-
-(add-hook 'remember-mode-hook 'org-remember-apply-template)
-
-(define-key global-map [(control meta ?r)] 'remember)
-(custom-set-variables
- '(org-agenda-files (quote ("~/workspace/github/org/gtd/todo.org")))
- '(org-default-notes-file "~/workspace/github/org/gtd/notes.org")
- '(org-agenda-ndays 7)
- '(org-deadline-warning-days 14)
- '(org-agenda-show-all-dates t)
- '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-done t)
- '(org-agenda-start-on-weekday nil)
- '(org-reverse-note-order t)
- '(org-fast-tag-selection-single-key (quote expert))
- '(org-remember-store-without-prompt t)
- '(org-remember-templates
-   (quote ((116 "* TODO %?\n  %u" "~/workspace/github/org/gtd/todo.org" "Tasks")
-           (110 "* %u %?" "~/workspace/github/org/gtd/notes.org" "Notes"))))
- '(remember-annotation-functions (quote (org-remember-annotation)))
- '(remember-handler-functions (quote (org-remember-handler))))
-
-
-
-;; ;; Show iCal calendars in the org agenda
-;; (when (and *is-a-mac* (require 'org-mac-iCal nil t))
-;;   (setq org-agenda-include-diary t
-;;         org-agenda-custom-commands
-;;         '(("I" "Import diary from iCal" agenda ""
-;;            ((org-agenda-mode-hook #'org-mac-iCal)))))
-
-;;   (add-hook 'org-agenda-cleanup-fancy-diary-hook
-;;             (lambda ()
-;;               (goto-char (point-min))
-;;               (save-excursion
-;;                 (while (re-search-forward "^[a-z]" nil t)
-;;                   (goto-char (match-beginning 0))
-;;                   (insert "0:00-24:00 ")))
-;;               (while (re-search-forward "^ [a-z]" nil t)
-;;                 (goto-char (match-beginning 0))
-;;                 (save-excursion
-;;                   (re-search-backward "^[0-9]+:[0-9]+-[0-9]+:[0-9]+ " nil t))
-;;                 (insert (match-string 0))))))
-
-
-
-;; disable keybinding for org mode
-
-
+;; org babel settings
 (after-load 'org
   (define-key org-mode-map (kbd "C-,") nil)
   (define-key org-mode-map (kbd "C-M-<up>") 'org-up-element)
@@ -361,6 +72,7 @@ typical word processor."
      (ditaa . t)
      (emacs-lisp . t)
      (gnuplot . t)
+     (go . t)
      (http . t)
      (ipython . t)
      (js . t)
@@ -376,9 +88,8 @@ typical word processor."
      (scheme . t)
      (sqlite . t))))
 
-;;----------------------------------------------------------------------------------------------------
-;; Org blog settings
-;;----------------------------------------------------------------------------------------------------
+
+;; org blog settings
 (require 'ox-publish)
 (require 'ox-html)
 
@@ -407,11 +118,25 @@ typical word processor."
 
         ))
 
+
+
 ;; add jquery support
 (setq org-html-head-extra
       "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<link href='http://apps.bdimg.com/libs/highlight.js/9.1.0/styles/zenburn.min.css' rel='stylesheet'>
+<script src='http://apps.bdimg.com/libs/highlight.js/9.1.0/highlight.min.js'></script>
+<script>hljs.initHighlightingOnLoad();</script>
 <link rel='stylesheet' href='../css/worg2.css' typbe='text/css'/>
-<link rel='shortcut icon' type='image/x-icon' href='/favicon.ico'>")
+<link rel='shortcut icon' type='image/x-icon' href='/favicon.ico'>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=UA-111585106-1'></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'UA-111585106-1');
+</script>")
 
 (setq org-html-preamble "
 <div class='nav'>
@@ -517,7 +242,7 @@ $.ajax(comments_api, {
 Email: dai92817@icloud.com
 </div>")
 
-
+
 
 ;; this code can clear the cache and will regenerate all the html files
 ;; (setq org-publish-use-timestamps-flag nil)
@@ -527,7 +252,7 @@ Email: dai92817@icloud.com
   "Take a screenshot into a time stamped unique-named file in the
 same directory as the org-buffer and insert a link to this file."
   (interactive)
-  (org-display-inline-images)
+  ;;(org-display-inline-images)
   (setq filename
         (concat
          (make-temp-name
@@ -545,11 +270,19 @@ same directory as the org-buffer and insert a link to this file."
         ))
 
   (setq relative-dir (concat "./imgs/" (file-name-nondirectory filename)))
+  ;; copy image file to publish dir, so I don't need to move the image by command
+  ;; This place has a bug, I need to know the current folder
+  ;; (dired-copy-file filename
+  ;;                  (format "~/workspace/blog/public_html/%s/imgs/%s"
+  ;;                          (car (last (butlast (split-string (file-name-directory filename) "\/") 3)))
+  ;;                          (file-name-nondirectory filename)) t)
+
   (if (file-exists-p filename)
-      (insert (concat "#+ATTR_HTML: :width 100%\n[[file:" relative-dir "]]")))
-  (org-display-inline-images)
+      (insert (concat "#+ATTR_HTML: :width 80%\n[[file:" relative-dir "]]")))
+  ;;(org-display-inline-images)
   )
 
+
 
 ;; 下面解决使用 M-q 自动断行，会有空格的问题
 (defun clear-single-linebreak-in-cjk-string (string)
@@ -567,15 +300,17 @@ same directory as the org-buffer and insert a link to this file."
 
 (add-to-list 'org-export-filter-final-output-functions
              'ox-html-clear-single-linebreak-for-cjk)
+
 
 ;; The codes of blow are coming from this place:
 ;; http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
 ;; insert a youtube video link, show it can show in my blog
 ;; we can use it by this [[yt:A3JAlWM8qRM]]
-(defvar yt-iframe-format
+(defvar yt-iframe-formats
   ;; You may want to change your width and height.
-  (concat "<iframe width=\"440\""
+  (concat "<iframe width=\"560\""
           " height=\"335\""
+          " style=\"display:block;margin: auto\""
           " src=\"https://www.youtube.com/embed/%s\""
           " frameborder=\"0\""
           " allowfullscreen>%s</iframe>"))
@@ -588,20 +323,19 @@ same directory as the org-buffer and insert a link to this file."
             handle)))
  (lambda (path desc backend)
    (cl-case backend
-     (html (format yt-iframe-format
+     (html (format yt-iframe-formats
                    path (or desc "")))
      (latex (format "\href{%s}{%s}"
                     path (or desc "video"))))))
-
+
 
 ;; set org bullets
 ;; https://zhangda.wordpress.com/
 ;; https://github.com/sabof/org-bullets
 (require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 0)))
 
-
-
+
 ;; http://kitchingroup.cheme.cmu.edu/blog/2015/07/10/Drag-images-and-files-onto-org-mode-and-insert-a-link-to-them/
 ;; drag file to org mode
 (defun my-dnd-func (event)
@@ -646,16 +380,238 @@ same directory as the org-buffer and insert a link to this file."
 (define-key org-mode-map (kbd "<drag-n-drop>") 'my-dnd-func)
 (define-key org-mode-map (kbd "<s-drag-n-drop>") 'my-dnd-func)
 (define-key org-mode-map (kbd "<M-drag-n-drop>") 'my-dnd-func)
-
-
+
 ;; insert github gist codes
 (defun insert-gist (link)
   (interactive "sEmbed link is?")
   (insert (format "#+BEGIN_EXPORT html
 	%s
 	#+END_EXPORT" link)))
-
+
+;; xah math input
+;; for more information please visit here:http://ergoemacs.org/emacs/xmsi-math-symbols-input.html
 (add-hook 'org-mode-hook #'xah-math-input-mode-on)
+
+;; From this place, I will set up my GTD system
+;; C-ca org-agenda
+(define-key global-map "\C-cc" 'org-capture)
 
+;; C-'
+(setq org-agenda-files '("~/gtd/inbox.org"
+                         "~/gtd/gtd.org"
+                         "~/gtd/tickler.org"
+                         "~/gtd/someday.org"))
+
+
+(defun verify-refile-target ()
+  "Exclude todo keywords with a done state from refile targets."
+  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+(setq org-refile-target-verify-function 'verify-refile-target)
+
+(setq org-agenda-dir "~/workspace/gtd")
+
+(setq org-refile-targets '((nil :maxlevel . 5)
+                           ("~/gtd/gtd.org" :maxlevel . 3)
+                           ("~/gtd/someday.org" :level . 1)
+                           ("~/gtd/tickler.org" :maxlevel . 2)))
+
+;; TODO entry to automatically change to DONE when all children are done
+;; code from: http://orgmode.org/manual/Breaking-down-tasks.html#Breaking-down-tasks
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+;; end
+
+
+(setq org-agenda-span 'day)
+(setq org-todo-keywords '((sequence "TODO(t)" "DOING(s)" "BLOCKED" "REVIEW" "|" "DONE(d)")))
+
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("DOING" :foreground "yellow" :weight bold)
+              ("BLOCKED" :foreground "red" :weight bold)
+              ("REVIEW" :foreground "orange" :weight bold)
+              )))
+;; Fast todo selection allows changing from any task todo state to any other state directly
+;; by selecting the appropriate key from the fast todo selection key menu.
+(setq org-use-fast-todo-selection t)
+
+;; Then each time you turn an entry from a TODO (not-done) state into any of the DONE
+;; states, a line ‘CLOSED: [timestamp]’ will be inserted just after the headline.
+;; http://orgmode.norg/manual/Closing-items.html#Closing-items
+(setq org-log-done 'time)
+
+;; Change task state to STARTED when clocking in
+(setq org-clock-in-switch-to-state "DOING")
+
+(setq org-clock-out-switch-to-state "DONE")
+
+;; tags
+(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h)
+                      ("@homework" . ?o)
+                      ("@buy" . ?b)
+                      ("@study" . ?s)))
+
+
+;; clock
+;;To save the clock history across Emacs sessions, use
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+
+;; http://orgmode.org/manual/Resolving-idle-time.html#Resolving-idle-time
+;;(setq org-clock-idle-time 1000)
+
+;; start capture
+(setq org-default-notes-file (concat org-directory "~/workspace/gtd/notes.org"))
+`
+(setq org-capture-templates '(("t" "Todo [inbox]" entry
+                               (file+headline "~/gtd/inbox.org" "Tasks")
+                               "* TODO %i%?")
+                              ("T" "Tickler" entry
+                               (file+headline "~/gtd/tickler.org" "Tickler")
+                               "* %i%? \n %U")))
+
+
+;; In order to include entries from the Emacs diary into Org mode's agenda
+(setq org-agenda-include-diary t
+      diary-file (locate-user-emacs-file "~/gtd/diary.org")
+      org-agenda-diary-file 'diary-file)
+
+
+(setq org-stuck-projects
+      '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
+(setq org-agenda-window-setup 'current-window)
+
+;; diary for chinese birthday
+;; https://emacs-china.org/t/topic/2119/14
+(defun my--diary-chinese-anniversary (lunar-month lunar-day &optional year mark)
+  (if year
+      (let* ((d-date (diary-make-date lunar-month lunar-day year))
+             (a-date (calendar-absolute-from-gregorian d-date))
+             (c-date (calendar-chinese-from-absolute a-date))
+             (cycle (car c-date))
+             (yy (cadr c-date))
+             (y (+ (* 100 cycle) yy)))
+        (diary-chinese-anniversary lunar-month lunar-day y mark))
+    (diary-chinese-anniversary lunar-month lunar-day year mark)))
+
+(require 'cal-china-x)
+(setq mark-holidays-in-calendar t)
+(setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
+(setq cal-china-x-general-holidays '((holiday-lunar 1 15 "元宵节")))
+;; (setq calendar-holidays
+;;       (append cal-china-x-important-holidays
+;;               cal-china-x-general-holidays
+;;               other-holidays))
+
+;; pomodoro 通知功能
+(defun notify-osx (title message)
+  (call-process "terminal-notifier"
+                nil 0 nil
+                "-group" "Emacs"
+                "-title" title
+                "-message" message
+                ;;"-sender" "org.gnu.Emacs"
+                "-activate" "oeg.gnu.Emacs"))
+
+
+
+(add-hook 'org-pomodoro-finished-hook
+          (lambda ()
+            (notify-osx "Pomodoro completed!" "Time for a break.")))
+
+(add-hook 'org-pomodoro-break-finished-hook
+          (lambda ()
+            (notify-osx "Pomodoro Short Break Finished" "Ready for Another?")))
+
+(add-hook 'org-pomodoro-long-break-finished-hook
+          (lambda ()
+            (notify-osx "Pomodoro Long Break Finished" "Ready for Another?")))
+
+(add-hook 'org-pomodoro-killed-hook
+          (lambda ()
+            (notify-osx "Pomodoro Killed" "One does not simply kill a pomodoro!")))
+
+;; 任务提醒功能
+;; https://emacs-china.org/t/org-agenda/232
+(require 'appt)
+(setq appt-time-msg-list nil)    ;; clear existing appt list
+(setq appt-display-interval '5)  ;; warn every 5 minutes from t - appt-message-warning-time
+(setq
+ appt-message-warning-time '15  ;; send first warning 15 minutes before appointment
+ appt-display-mode-line nil     ;; don't show in the modeline
+ appt-display-format 'window)   ;; pass warnings to the designated window function
+(appt-activate 1)                ;; activate appointment notification
+(display-time)                   ;; activate time display
+
+(org-agenda-to-appt)             ;; generate the appt list from org agenda files on emacs launch
+(run-at-time "24:01" 3600 'org-agenda-to-appt)           ;; update appt list hourly
+(add-hook 'org-finalize-agenda-hook 'org-agenda-to-appt) ;; update appt list on agenda view
+
+(defun my-appt-display (min-to-app new-time msg)
+  (notify-osx
+   (format "Appointment in %s minutes" min-to-app)    ;; passed to -title in terminal-notifier call
+   (format "%s" msg)))                                ;; passed to -message in terminal-notifier call
+(setq appt-disp-window-function (function my-appt-display))
+
+;; like search study, we can use C-c a s s command
+;; http://sachachua.com/blog/2013/06/how-i-use-emacs-org-mode-for-my-weekly-reviews/
+(setq org-agenda-custom-commands
+      '(("x" agenda)
+        ("d" todo "DONE")
+        ("W" todo-tree "BLOCKED")
+        ("gm" tags "@game")
+        ("w" "Weekly Review"
+         ((agenda "" ((org-agenda-ndays 7))) ;; review upcoming deadlines and appointments
+          (todo "TODO") ;; review all projects (assuming you use todo keywords to designate projects)
+          (todo "BLOCKED") ;; review someday/maybe items
+          (todo "DONE")))
+        ("v" tags-todo "+boss-urgent")
+        ("U" tags-tree "+boss-urgent")
+        ("f" occur-tree "\\<FIXME\\>")
+        ("h" . "HOME+Name tags searches") ; description for "h" prefix
+        ("ss" tags "@study")
+        ))
+
+(setq org-clock-out-when-done t)
+(setq org-clock-report-include-clocking-task t)
+(setq org-clock-continuously 'nil)
+
+(defun archive-when-done ()
+  "Archive current entry if it is marked as DONE (see `org-done-keywords')."
+  )
+(add-hook 'org-after-todo-state-change-hook
+          'archive-when-done)
+
+
+(setq org-archive-location (concat "~/gtd/archive/archive-" (format-time-string "%Y%m" (current-time)) ".org_archive::"))
+
+;; pomodoro setting
+(defun pomodoro-start ()
+  "Starts and automatically clocks out a Pomodoro unit of 30 minutes."
+  (interactive)
+  (org-pomodoro)
+  (org-clock-in)
+  (message "Starting pomodoro cycle of 30 minutes.")
+  )
+
+
+(add-hook 'org-pomodoro-finished-hook
+          (lambda ()
+            (org-clock-out)))
+
+(add-hook 'org-pomodoro-break-finished-hook
+          (lambda ()
+            (pomodoro-start)))
+
+(global-set-key '[f5] 'pomodoro-start)
+
+;; simplifying clock-in / clock-out
+(global-set-key '[f5] 'org-clock-in)
+(global-set-key '[f6] 'org-clock-out)
+
 (provide 'init-org)
 ;;; init-org.el ends here

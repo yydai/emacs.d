@@ -20,7 +20,7 @@ This is helpful for writeroom-mode, in particular."
 
 
 
-(set-face-attribute 'default nil :font "PT Mono")
-(set-frame-font "PT Mono" nil t)
+(set-face-attribute 'default nil :font "Monaco-22")
+(set-frame-font "Monaco" nil t)
 
 (provide 'init-fonts)

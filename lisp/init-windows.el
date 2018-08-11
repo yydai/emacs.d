@@ -86,7 +86,78 @@ Call a second time to restore the original window configuration."
 
 (global-set-key (kbd "C-c <down>") 'sanityinc/toggle-current-window-dedication)
 
+;; swap two buffer
+(defun swap-buffers-in-windows ()
+  "Put the buffer from the selected window in next window, and vice versa"
+  (interactive)
+  (let* ((this (selected-window))
+         (other (next-window))
+         (this-buffer (window-buffer this))
+         (other-buffer (window-buffer other)))
+    (set-window-buffer other this-buffer)
+    (set-window-buffer this other-buffer)
+    )
+  )
 
+(defun window-shrunk (delta)
+  (interactive "p")
+  (shrink-window 30 t))
+
+
+(defun window-enlarge (delta)
+  (interactive "p")
+  (enlarge-window 30 t))
+
+(defun window-scale-adjust (inc)
+  (interactive "p")
+  (let ((ev last-command-event)
+        (echo-keystrokes nil))
+    (let* ((base (event-basic-type ev))
+           (step
+            (pcase base
+              ((or ?+ ?=) inc)
+              (?- (- inc))
+              (?0 0)
+              (_ inc))))
+      (window-enlarge step)
+      ;; (unless (zerop step)
+      (message "Use +,-,0 for further adjustment")
+      (set-transient-map
+       (let ((map (make-sparse-keymap)))
+         (dolist (mods '(() (control)))
+           (dolist (key '(?- ?+ ?= ?0)) ;; = is often unshifted +.
+             (define-key map (vector (append mods (list key)))
+               (lambda () (interactive) (window-scale-adjust (abs inc))))))
+         map))))) ;; )
+
+
+
+;; toggle window from maximize to balance state
+(defun yd-toggle-window-state ()
+  (interactive)
+  (if (get 'yd-toggle-window-state 'state)
+      (progn
+        (call-interactively 'maximize-window)
+        (put 'yd-toggle-window-state 'state nil)
+        (set-face-attribute 'default (selected-frame) :height 200)
+        )
+    (progn
+      (call-interactively 'balance-windows)
+      (put 'yd-toggle-window-state 'state t)
+      (set-face-attribute 'default nil :font "Monaco-15"))))
+
+(progn
+  ;; define a prefix keymap
+  (define-prefix-command 'my-windows-key-map)
+  (define-key my-windows-key-map (kbd "m") 'maximize-window)
+  (define-key my-windows-key-map (kbd "b") 'balance-windows)
+  (define-key my-windows-key-map (kbd "s") 'swap-buffers-in-windows)
+  (define-key my-windows-key-map (kbd "M-o") 'yd-toggle-window-state)
+  (define-key my-windows-key-map (kbd "M-=") 'window-enlarge)
+  (define-key my-windows-key-map (kbd "M--") 'window-shrunk))
+
+
+(global-set-key (kbd "M-o") my-windows-key-map)
 
 (unless (memq window-system '(nt w32))
   (windmove-default-keybindings 'control))

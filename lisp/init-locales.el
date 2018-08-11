@@ -1,8 +1,6 @@
 ;; packages
 ;; elpy, py-
 
-
-
 (defun sanityinc/utf8-locale-p (v)
   "Return whether locale string V relates to a UTF-8 locale."
   (and v (string-match "UTF-8" v)))
@@ -21,7 +19,6 @@
   (set-terminal-coding-system 'utf-8)
   (set-selection-coding-system (if (eq system-type 'windows-nt) 'utf-16-le 'utf-8))
   (prefer-coding-system 'utf-8))
-
 
 
 ;;; instead use erase-buffer use 'clear-buffer'
@@ -113,7 +110,7 @@ Version 2017-02-10"
 
 
 ;;; set for tab
-(setq-default indent-tabs-mode nil) ; emacs 23.1, 24.2, default to t
+;; (setq-default indent-tabs-mode nil) ; emacs 23.1, 24.2, default to t
 (defun my-insert-tab-char ()
   "Insert a tab char. (ASCII 9, \t)."
   (interactive)
@@ -163,22 +160,16 @@ Version 2017-02-10"
 
 
 ;;;============settings=====================
-(set-face-attribute 'default nil :font "Monaco-18" )
+(set-face-attribute 'default nil :font "Monaco-20")
+
 (setq-default cursor-type 'bar)
 ;;; show the line number
-(global-nlinum-mode t)
+;;; open with 1 or t
+(global-nlinum-mode -1)
 (nyan-mode t)
 
-(global-set-key (kbd "TAB") 'my-insert-tab-char) ; same as Ctrl+i
-(setq-default tab-width 4) ; emacs 23.1, 24.2, default to 8
-(setq tab-width 4)
-(setq-default tab-always-indent t)
-(setq-default tab-always-indent nil)
-(setq-default tab-always-indent 'complete)
 
-(global-set-key (kbd "<f8>") 'ydai-run-current-file)
 (add-hook 'c++-mode-hook (lambda () (local-set-key (kbd "C-c C-c") 'cpp-single-file-compile)))
-
 
 
 ;; search Wikipedia
@@ -382,10 +373,88 @@ PROMPT sets the `read-string prompt."
 ;; (when (eq system-type 'darwin)
 ;;   (setq mac-option-modifier 'super)
 ;;   (setq mac-command-modifier 'meta))
-<<<<<<< HEAD
-=======
 
->>>>>>> Add some new features
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2016/bin/x86_64-darwin/"))
+(setq exec-path (append exec-path '("/usr/local/texlive/2016/bin/x86_64-darwin/")))
+(setq org-latex-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
+
+
+
+;; https://stackoverflow.com/questions/18347968/how-to-open-emacs-gui-ide-from-mac-terminal
+;; setting for open file from terminal
+;; for OSX use: open -a Emacs <filename> will open the file from the opened Emacs
+;; For more detail see the link above
+(setq ns-pop-up-frames nil)
+
+
+(global-set-key (kbd "C-x k") 'kill-this-buffer)
+
+;; clean up mode line
+;; ;; https://www.masteringemacs.org/article/hiding-replacing-modeline-strings
+(diminish 'projectile-mode)
+(diminish 'my-keys-minor-mode)
+(diminish 'which-key-mode)
+(diminish 'paredit-mode)
+(diminish 'org-mode)
+(diminish 'whole-line-or-region-global-mode)
+(diminish 'whole-line-or-region-mode)
+(diminish 'whitespace-cleanup-mode)
+(diminish 'display-time-mode)
+
+;; use the spacemacs mode line
+;;(require 'spaceline-config)
+;;(spaceline-spacemacs-theme)
+(setq display-time-format "")
+
+(defmacro open-file (filename filepath)
+  "Open a file"
+  `(defun ,(intern (format "open-%s" filename)) ()
+     (interactive)
+     (find-file ,filepath)))
+
+(open-file "init" "~/.emacs.d/lisp")
+(open-file "gtd" "~/gtd/inbox.org")
+(open-file "blog" "~/workspace/blog/org/index.org")
+
+;; find file more quickly in dired mode
+(add-hook
+ 'dired-mode-hook
+ (lambda()
+   (define-key dired-mode-map "j" 'counsel-find-file)))
+
+
+(setq package-archives '(("myelpa" . "~/myelpa/")))
+(add-auto-mode 'sml-mode "\\.sml\\'")
+;; disable prettify symbols mode
+
+
+;; (setq-default indent-tabs-mode t)
+(defun yingdai/untabify-hook ()
+  (untabify (point-min) (point-max)))
+(add-hook 'before-save-hook 'yingdai/untabify-hook)
+
+(defadvice bookmark-jump (after bookmark-jump activate)
+  (let ((latest (bookmark-get-bookmark bookmark)))
+    (setq bookmark-alist (delq latest bookmark-alist))
+    (add-to-list 'bookmark-alist latest)))
+
+;; hightlight-parentheses mode
+(global-highlight-parentheses-mode t)
+
+(require 'multi-term)
+(setq multi-term-program "/bin/zsh")   ;; 设置 shell
+(setq multi-term-buffer-name "mterm")  ;; 设置 buffer 名字 ls
+(add-to-list 'term-bind-key-alist '("C-j"))
+(add-to-list 'term-bind-key-alist '("C-o"))
+(add-to-list 'term-bind-key-alist '("C-e"))
+;;(add-to-list 'term-bind-key-alist '("M-f"))
+;;(add-to-list 'term-bind-key-alist '("M-b"))
+(add-to-list 'term-bind-key-alist '("C-k"))
+
+
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
 
 
 (provide 'init-locales)

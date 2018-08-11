@@ -1,0 +1,24 @@
+* Emacs
+** Define a perfix key
+
+This is a example of how to define a prefix keymap
+
+#+BEGIN_SRC elisp
+(progn
+  ;; define a prefix keymap
+  (define-prefix-command 'my-windows-key-map)
+  (define-key my-windows-key-map (kbd "m") 'maximize-window)
+  (define-key my-windows-key-map (kbd "b") 'balance-windows)
+  )
+(global-set-key (kbd "M-o") my-windows-key-map)
+#+END_SRC
+
+** toggle
+Toggle from one state to another
+
+
+* Python
+
+* Linux
+
+* Shell

@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: header
+# key: hh
+# --
+#-------------------------------------------------
+# 文件名称：`(setq pname (file-name-nondirectory (directory-file-name (file-name-directory buffer-file-name))))`
+#
+# 功能描述：$0
+# DEPS:
+#    $1
+# OUT:
+#    $2
+# DEV: yingying.dai
+# DATE: `(format-time-string "%Y.%m.%d")`
+#--------------------------------------------------

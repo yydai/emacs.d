@@ -14,6 +14,8 @@
 (setq gc-cons-threshold 100000000) ; ie 100mb, default is 800kb
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
+
 
 (require 'init-benchmarking) ;; Measure startup time
 
@@ -33,18 +35,18 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (require 'init-compat)
 (require 'init-utils)
-(require 'init-site-lisp) ;; Must come before elpa, as it may provide package.el
-;; Calls (package-initialize)
-(require 'init-elpa)      ;; Machinery for installing required packages
-(require 'init-exec-path) ;; Set up $PATH
+(require 'init-site-lisp) ;; must come before elpa, as it may provide package.el
+;; calls (package-initialize)
+(require 'init-elpa)      ;; machinery for installing required packages
+(require 'init-exec-path) ;; set up $path
 
 ;;----------------------------------------------------------------------------
-;; Allow users to provide an optional "init-preload-local.el"
+;; allow users to provide an optional "init-preload-local.el"
 ;;----------------------------------------------------------------------------
 (require 'init-preload-local nil t)
 
 ;;----------------------------------------------------------------------------
-;; Load configs for specific features and modes
+;; load configs for specific features and modes
 ;;----------------------------------------------------------------------------
 
 (require-package 'wgrep)
@@ -52,6 +54,12 @@
 (require-package 'diminish)
 (require-package 'scratch)
 (require-package 'mwe-log-commands)
+
+
+;; add by myself
+;; (require 'elpa-mirror)
+(load "sml-mode-6.7.el")
+(require 'sml-mode)
 
 (require 'init-frame-hooks)
 (require 'init-xterm)
@@ -132,7 +140,10 @@
 (require 'init-mouse)
 (disable-mouse-mode 1)
 (require 'init-blog)
+(require 'init-deft)
 (require 'init-dashboard)
+(require 'init-go)
+(require 'init-java)
 ;; Extra packages which don't require any configuration
 (require 'init-macro)
 (require 'init-text-process)
@@ -159,12 +170,17 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
-
+(load "qunarjob-mode.el")
+(require 'qunarjob-mode)
 ;;----------------------------------------------------------------------------
 ;; Allow users to provide an optional "init-local" containing personal settings
 ;;----------------------------------------------------------------------------
 (require 'init-local nil t)
-
+(require 'highlight-parentheses)
+(require 'julia-repl)
+(require 'autopair)
+(autopair-global-mode) ;; to enable in all buffers
+(require 'init-pdf-tools)
 
 ;;----------------------------------------------------------------------------
 ;; Locales (setting them earlier in this file doesn't work in X)
@@ -179,7 +195,10 @@
   (message "Emacs startup time: %d seconds."
            (time-to-seconds (time-since emacs-load-start-time))))
 
-
+;; Snag the user's PATH and GOPATH
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "GOPATH"))
 
 (provide 'init)
 

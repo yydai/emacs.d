@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: scheme code
-# key: ss
+# name: shell code
+# key: sh
 # --
 #+BEGIN_SRC shell
 $0

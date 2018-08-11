@@ -21,6 +21,10 @@
   (setq base "~/workspace/blog/org/index.org")
   (find-file base))
 
+;;search the file of my blog
+(defun blog-find ()
+  (interactive)
+  (call-interactively (lambda () (interactive) (bjm-deft "~/workspace/blog/org"))))
 
 ;; set the http server
 (setq httpd-root "~/workspace/blog/public_html/")
@@ -42,9 +46,9 @@
           (setq subpath (substring buffer-file-name (string-match-p
                                                      "/[[:word:]_?]+/[[:word:]-?]+.org$"
                                                      buffer-file-name) (- (length buffer-file-name) 4))))
-        (setq url (format "http://%s:%d%s%s" "127.0.0.1" 8080 subpath ".html")))
+        (setq url (format "http://%s:%d%s%s" "127.0.0.1" 8087 subpath ".html")))
 
-    (setq url (format "http://%s:%d" "127.0.0.1" 8080)))
+    (setq url (format "http://%s:%d" "127.0.0.1" 8087)))
   (browse-url url))
 
 

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: read a line
+# key: rl
+# --
+line, err := reader.ReadBytes('\n')
+line = bytes.TrimRight(line, "\r\n")

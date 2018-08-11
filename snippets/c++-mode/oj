@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: oj
+# key: oj
+# --
+/*
+ */
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+	$0
+};

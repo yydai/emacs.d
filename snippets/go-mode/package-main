@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: package main
+# key: pm
+# --
+package main

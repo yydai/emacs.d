@@ -34,10 +34,29 @@
 
 (elpy-enable)
 
+;; not work
+;; (add-hook 'python-mode-hook
+;;           (lambda ()
+;;             (setq indent-tabs-mode nil)
+;;             (setq python-indent 4)
+;;             (setq tab-width 4))
+;;           (untabify (point-min) (point-max)))
+
+;; seem is ok
 (add-hook 'python-mode-hook
           (lambda ()
             (setq indent-tabs-mode t)
-            (setq tab-width 4)
-            (setq python-indent 4)))
+            (setq python-indent 4)
+            (setq tab-width 4))
+          (tabify (point-min) (point-max)))
+
+(setq gud-pdb-command-name "python -m pdb")
+
+(defun user-python-debug-buffer ()
+  "Run python debugger on current buffer."
+  (interactive)
+  (setq command (format "python -u -m pdb %s " (file-name-nondirectory buffer-file-name)))
+  (let ((command-with-args (read-string "Debug command: " command nil nil nil)))
+    (pdb command-with-args)))
 
 (provide 'init-python-mode)

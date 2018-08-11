@@ -58,7 +58,8 @@
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
     ;; C-x C-f was binded to counsel-find-file
-    (define-key map (kbd "C-x C-f") 'projectile-find-file-in-known-projects)
+    ;; conflict  with latex command
+    ;;(define-key map (kbd "C-c C-f") 'projectile-find-file-in-known-projects)
     (define-key map (kbd "C-x b") 'helm-buffers-list)
     (define-key map (kbd "C-a") 'yd-move-indent)
     map)

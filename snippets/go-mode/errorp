@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: error Fprintf
+# key: errfpf
+# --
+if err != nil {
+	fmt.Fprintf(os.stderr, "%v\n", err)
+    $1
+}

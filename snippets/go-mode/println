@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: println
-# key: pr
+# key: pl
 # --
-System.out.println("${1:text}");
+fmt.Println($0)

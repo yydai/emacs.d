@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: test
+# key: test
+# --
+Importance: ${1:$$(yas-choose-value '("high" "average" "below average"))}
+Difficulty: ${2:$$(yas-choose-value '("easy" "hard"))}
+$0
