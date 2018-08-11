@@ -455,7 +455,8 @@ PROMPT sets the `read-string prompt."
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-
+;; move backup to one dir
+(setq backup-directory-alist `(("." . "~/.emacs/.saves")))
 
 (provide 'init-locales)
 
