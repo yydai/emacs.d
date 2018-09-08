@@ -160,7 +160,7 @@ Version 2017-02-10"
 
 
 ;;;============settings=====================
-(set-face-attribute 'default nil :font "Monaco-20")
+(set-face-attribute 'default nil :font "Monaco-16")
 
 (setq-default cursor-type 'bar)
 ;;; show the line number
@@ -441,22 +441,27 @@ PROMPT sets the `read-string prompt."
 ;; hightlight-parentheses mode
 (global-highlight-parentheses-mode t)
 
-(require 'multi-term)
-(setq multi-term-program "/bin/zsh")   ;; 设置 shell
-(setq multi-term-buffer-name "mterm")  ;; 设置 buffer 名字 ls
-(add-to-list 'term-bind-key-alist '("C-j"))
-(add-to-list 'term-bind-key-alist '("C-o"))
-(add-to-list 'term-bind-key-alist '("C-e"))
-;;(add-to-list 'term-bind-key-alist '("M-f"))
-;;(add-to-list 'term-bind-key-alist '("M-b"))
-(add-to-list 'term-bind-key-alist '("C-k"))
-
-
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;; move backup to one dir
 (setq backup-directory-alist `(("." . "~/.emacs/.saves")))
+(setq make-backup-files nil)
+(desktop-save-mode 0)
+
+(setq company-dabbrev-downcase 0)
+(setq company-idle-delay 0)
+(defun tab-indent-or-complete ()
+  (interactive)
+  (if (minibufferp)
+      (minibuffer-complete)
+    (if (or (not yas-minor-mode)
+            (null (do-yas-expand)))
+        (if (check-expansion)
+            (company-complete-common)
+          (indent-for-tab-command)))))
+
+(global-set-key [backtab] 'tab-indent-or-complete)
 
 (provide 'init-locales)
 

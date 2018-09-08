@@ -178,9 +178,9 @@
 (require 'init-local nil t)
 (require 'highlight-parentheses)
 (require 'julia-repl)
-(require 'autopair)
-(autopair-global-mode) ;; to enable in all buffers
-(require 'init-pdf-tools)
+(require 'init-pdf)
+(require 'init-workgroup)
+(require 'init-hydra)
 
 ;;----------------------------------------------------------------------------
 ;; Locales (setting them earlier in this file doesn't work in X)

@@ -19,7 +19,7 @@
   (define-key my-leader-key-map (kbd "c s") #'my-org-screenshot)
   )
 
-(global-set-key (kbd "s-SPC") 'my-leader-key-map)
+(global-set-key (kbd "S-SPC") 'my-leader-key-map)
 
 
 

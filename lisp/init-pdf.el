@@ -50,13 +50,6 @@
   (pdf-view-midnight-minor-mode)
   )
 
-(defun pdf-midnite-test ()
-  "Set pdf-view-midnight-colors to amber on dark slate blue."
-  (interactive)
-  (setq pdf-view-midnight-colors '("#585858" . "#000" )) ; amber
-  (pdf-view-midnight-minor-mode)
-  )
-
 (defun pdf-midnite-green ()
   "Set pdf-view-midnight-colors to green on black."
   (interactive)
@@ -70,7 +63,17 @@
   (local-set-key (kbd "@") (quote pdf-midnite-amber))
   (local-set-key (kbd "#") (quote pdf-midnite-green))
   (local-set-key (kbd "$") (quote pdf-midnite-original))
+  (local-set-key (kbd ".") (quote pdf-view-last-page))
+  (local-set-key (kbd ",") (quote pdf-view-first-page))
+  (local-set-key (kbd "g") (quote pdf-view-goto-page))
+  (local-set-key (kbd "P") (quote pdf-view-previous-page))
+  (local-set-key (kbd "N") (quote pdf-view-next-page))
   )
 (add-hook 'pdf-view-mode-hook 'pdf-midnite-colour-schemes)
 
-(provide 'init-pdf-tools)
+;; http://pragmaticemacs.com/
+;; (define-key pdf-view-mode-map (kbd "h") 'pdf-annot-add-highlight-markup-annotation)
+;; (define-key pdf-view-mode-map (kbd "t") 'pdf-annot-add-text-annotation)
+;; (define-key pdf-view-mode-map (kbd "D") 'pdf-annot-delete)
+
+(provide 'init-pdf)

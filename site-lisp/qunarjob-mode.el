@@ -27,7 +27,7 @@
 
 (defvar qunarjob-mode-map
   (let ((map (make-keymap)))
-	(define-key map "\C-j" 'newline-and-indent)
+        (define-key map "\C-j" 'newline-and-indent)
     (define-key map "\C-z" 'func-create)
     map)
   "Keymap for qunarjob major mode")
@@ -44,7 +44,7 @@
 (setq qunarjob-highlights
       '(("Sin\\|Cos\\|Sum" . font-lock-function-name-face)
         ("EOF\\|hive_211" . font-lock-constant-face)
-        ("function\\|FUNCTION\\|return\\|RETURN\\|select\\|SELECT\\|from\\|FROM\\|where\\|WHERE\\|or\\|OR\\|from\\|FROM\\|between\\|BETWEEN\\|and\\|AND\\|insert\\|INSERT\\|into\\|INTO\\|table\\|TABLE\\|partition\\|PARTITION\\|overwrite\\|OVERWRITE\\|distinct\\|DISTINCT\\|IS\\|not\\|NOT\\|null\\|NULL" . font-lock-keyword-face)
+        ("function\\|FUNCTION\\|return\\|RETURN\\|select\\|SELECT\\|from\\|FROM\\|where\\|WHERE\\|or\\|OR\\|from\\|FROM\\|between\\|BETWEEN\\|and\\|AND\\|insert\\|INSERT\\|into\\|INTO\\|table\\|TABLE\\|partition\\|PARTITION\\|overwrite\\|OVERWRITE\\|distinct\\|DISTINCT\\|IS\\|not\\|NOT\\|null\\|NULL\\|UNION ALL\\|union all" . font-lock-keyword-face)
         ("string\\|int" . font-lock-type-face)))
 
 (define-derived-mode qunarjob-mode fundamental-mode "qunarjob-mode"

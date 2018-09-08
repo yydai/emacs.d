@@ -23,19 +23,18 @@ But you may use safer HTTPS instead.")
 ;;; use local
 ;;; how to set--reference:
 ;;; http://pengpengxp.github.io/2017-07-21-emacs%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0package%E6%9D%A5%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6.html?from=singlemessage&isappinstalled=0
-(require 'package)
 (setq package-archives '(
                          ("gnu" . "~/.emacs.d/elpa-packages/gnu")
                          ("marmalade" . "~/.emacs.d/elpa-packages/marmalade")
                          ("melpa" . "~/.emacs.d/elpa-packages/melpa")
                          ("emacswiki" . "~/.emacs.d/elpa-packages/emacswiki")
                          ))
-(package-initialize)
+
 ;;; use Chinese mirrors
-(setq package-archives '(("gnu"   . "https://elpa.emacs-china.org/gnu/")
-                         ("melpa" . "https://elpa.emacs-china.org/melpa/")
-                         ("melpa-stable" . "https://elpa.emacs-china.org/melpa-stable/")
-                         ))
+;; (setq package-archives '(("gnu"   . "https://elpa.emacs-china.org/gnu/")
+;;                          ("melpa" . "https://elpa.emacs-china.org/melpa/")
+;;                          ("melpa-stable" . "https://elpa.emacs-china.org/melpa-stable/")
+;;                          ))
 
 ;; (setq package-archives
 ;;       '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")

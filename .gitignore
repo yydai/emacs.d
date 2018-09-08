@@ -1,7 +1,10 @@
+.wg1
+.emacs_workgroups
 /url/cache
 *.cache
 /.emacs.desktop
 /auto-save-list
+persp-confs/
 /.session
 /session.*
 /custom.el

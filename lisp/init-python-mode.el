@@ -43,12 +43,12 @@
 ;;           (untabify (point-min) (point-max)))
 
 ;; seem is ok
-(add-hook 'python-mode-hook
-          (lambda ()
-            (setq indent-tabs-mode t)
-            (setq python-indent 4)
-            (setq tab-width 4))
-          (tabify (point-min) (point-max)))
+;; (add-hook 'python-mode-hook
+;;           (lambda ()
+;;             (setq indent-tabs-mode t)
+;;             (setq python-indent 4)
+;;             (setq tab-width 4))
+;;           (untabify (point-min) (point-max)))
 
 (setq gud-pdb-command-name "python -m pdb")
 

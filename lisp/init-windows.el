@@ -101,12 +101,12 @@ Call a second time to restore the original window configuration."
 
 (defun window-shrunk (delta)
   (interactive "p")
-  (shrink-window 30 t))
+  (shrink-window 10 t))
 
 
 (defun window-enlarge (delta)
   (interactive "p")
-  (enlarge-window 30 t))
+  (enlarge-window 10 t))
 
 (defun window-scale-adjust (inc)
   (interactive "p")
