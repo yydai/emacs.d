@@ -111,3 +111,8 @@
 	 I will use the *C-w* for copy and *M-w* for cut.
 
 ** issues
+
+
+**** Other features
+***** gallery of images
+    https://github.com/nanostudio-org/nanogallery2 is the tool. Update file of gallery_books/index.org will be ok.
