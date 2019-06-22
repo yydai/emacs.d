@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: draw
+# key: draw
+# --
+\definecolor{uququq}{rgb}{0.25098039215686274,0.25098039215686274,0.25098039215686274}
+\definecolor{ffqqqq}{rgb}{1,0,0}
+\begin{tikzpicture}[
+    line cap = round, >=triangle 45,
+    every node/.append style = {font=\footnotesize},
+    background rectangle/.style={fill=yellow!20},
+    show background rectangle]
+$0
+\end{tikzpicture}

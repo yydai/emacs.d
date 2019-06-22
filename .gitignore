@@ -51,3 +51,8 @@ site-lisp/package/
 /.historian
 /.uptimes.el
 timelog
+.eshell.aliases
+/games
+/latex-math-preview-cache
+/meghanada
+/request

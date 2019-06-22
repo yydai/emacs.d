@@ -1,6 +1,11 @@
 (require 'simple-httpd)
 (require 'browse-url)
 
+(defconst python-script-path "~/workspace/blog/org/t.py")
+(defconst localhost "127.0.0.1")
+(defconst base_path "~/workspace/blog/org/")
+
+
 
 (defmacro define-background-function-wrapper (bg-function fn)
   (let ((is-loading-sym (intern (concat "*" (symbol-name bg-function) "-is-loading*"))))
@@ -18,18 +23,34 @@
 
 (defun blog-open ()
   (interactive)
-  (setq base "~/workspace/blog/org/index.org")
+  (setq base (concat base_path "index.org"))
   (find-file base))
 
 ;;search the file of my blog
 (defun blog-find ()
   (interactive)
-  (call-interactively (lambda () (interactive) (bjm-deft "~/workspace/blog/org"))))
+  (call-interactively (lambda () (interactive) (bjm-deft base_path))))
 
 ;; set the http server
 (setq httpd-root "~/workspace/blog/public_html/")
-(httpd-serve-directory httpd-root)
-(httpd-start)
+(httpd-serve-directory httpd-root) ;; old way  use python instead
+(httpd-start) ;; old way
+
+;; run python script
+(defun my-run-python-script (name)
+  (shell-command-to-string (format "python3 %s" name)))
+
+
+(defun my/run-command (command-format-string)
+  "command-format-string: "
+  (shell-command-to-string command-format-string))
+
+
+
+;;(setq tdd default-directory)
+;;(setq default-directory httpd-root)
+                                        ;(my-run-python-script "-m http.server 8087 --bind 127.0.0.1")
+                                        ;(setq default-directory tdd)
 
 (defun blog-preview(&optional publish-current)
   "Preivew blog."
@@ -46,9 +67,11 @@
           (setq subpath (substring buffer-file-name (string-match-p
                                                      "/[[:word:]_?]+/[[:word:]-?]+.org$"
                                                      buffer-file-name) (- (length buffer-file-name) 4))))
-        (setq url (format "http://%s:%d%s%s" "127.0.0.1" 8087 subpath ".html")))
+        (setq url (format "http://%s:%d%s%s" localhost 8087 subpath ".html")))
 
-    (setq url (format "http://%s:%d" "127.0.0.1" 8087)))
+    (setq url (format "http://%s:%d" localhost 8087)))
+
+  ;; (my-run-python-script python-script-path) ;;; replace index.org css file. DON'T DELETE
   (browse-url url))
 
 
@@ -103,5 +126,112 @@ and http://ergoemacs.org/emacs/elisp_buffer_file_functions.html"
 (defun blog-site ()
   (interactive)
   (browse-url "https://yydai.github.io"))
+
+
+
+;;; download images from server
+(defun my/blog-download-image (link)
+  (interactive "sUrl: ")
+  (setq filename
+        (concat
+         (make-temp-name
+          (concat (file-name-directory (buffer-file-name))
+                  "imgs/"
+                  (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
+
+  (shell-command-to-string (format "wget %s -O %s" link filename))
+  (message "download image success")
+  ;; public_html 中 imgs 文件夹可能不存在，判断下 TODO ??
+  ;; code here
+  ;;
+  (setq public_path (replace-regexp-in-string "org" "public_html" filename))
+  (copy-file filename public_path)
+  (setq relative-dir (concat "./imgs/" (file-name-nondirectory filename)))
+  (if (file-exists-p filename)
+      (insert (concat "#+ATTR_HTML: :width 70%\n[[file:" relative-dir "]]"))))
+
+(defun my/org-download-image (link)
+  (interactive "sUrl: ")
+  (setq filename
+        (concat
+         (make-temp-name
+          (concat (file-name-directory (buffer-file-name))
+                  "imgs/"
+                  (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
+  (shell-command-to-string (format "wget %s -O %s" link filename))
+  (message "download image success")
+  (setq relative-dir (concat "./imgs/" (file-name-nondirectory filename)))
+  (if (file-exists-p filename)
+      (insert (concat "#+ATTR_HTML: :width 70%\n[[file:" relative-dir "]]")))
+  )
+
+;; advice org mode code highlight
+(defun org-html-src-block2 (src-block _contents info)
+  "Transcode a SRC-BLOCK element from Org to HTML.
+CONTENTS holds the contents of the item.  INFO is a plist holding
+contextual information."
+  (if (org-export-read-attribute :attr_html src-block :textarea)
+      (org-html--textarea-block src-block)
+    (let ((lang (org-element-property :language src-block))
+          (code (org-html-format-code src-block info))
+          (label (let ((lbl (and (org-element-property :name src-block)
+                                 (org-export-get-reference src-block info))))
+                   (if lbl (format " id=\"%s\"" lbl) ""))))
+      (if (not lang) (format "<pre><code class=\"example\"%s>\n%s</code></pre>" label code)
+        (format "<div class=\"org-src-container\">\n%s%s\n</div>"
+                ;; Build caption.
+                (let ((caption (org-export-get-caption src-block)))
+                  (if (not caption) ""
+                    (let ((listing-number
+                           (format
+                            "<span class=\"listing-number\">%s </span>"
+                            (format
+                             (org-html--translate "Listing %d:" info)
+                             (org-export-get-ordinal
+                              src-block info nil #'org-html--has-caption-p)))))
+                      (format "<label class=\"org-src-name\">%s%s</label>"
+                              listing-number
+                              (org-trim (org-export-data caption info))))))
+                ;; Contents.
+                (format "<pre class=\"%s\"><code class=\"%s\"%s>%s</code></pre>"
+                        (concat "src src-" lang) lang label code))))))
+
+(advice-add 'org-html-src-block :override 'org-html-src-block2)
+
+;; (require 'org)
+;; (advice-add 'org-html-src-block :override 'org-html-src-block2)
+;; (advice-remove 'org-html-src-block 'org-html-src-block2)
+
+;; another method is eval-after-load
+;; https://stackoverflow.com/questions/15717103/preferred-method-of-overriding-an-emacs-lisp-function
+;; (eval-after-load "telnet"
+;;   '(defun telnet-initial-filter (proc string)
+;;      ...))
+
+
+;; this is a very useful feature for writing blogs
+;; It will construct the blog link of index page.
+(defun blog-path-for-index ()
+  (interactive)
+  (setq subpath (substring buffer-file-name (string-match-p
+                                             "/[[:word:]_?]+/[[:word:]-?]+.org$"
+                                             buffer-file-name) (length buffer-file-name)))
+  (goto-line 1)
+  (setq url (format "[[.%s][%s]]" subpath
+                    (buffer-substring-no-properties (search-forward "#+TITLE: ") (line-end-position) )))
+
+  (kill-new url)
+  (message "Will open index file, paste the content to somewhere....")
+  ;; sleep for 3 second
+  ;;(sit-for 1)
+  (find-file "../index.org")
+  )
+
+(defun blog-url-search ()
+  (interactive)
+  (let* ((files (remove "." (mapcar #'file-name-sans-extension (directory-files ".."))))
+         (selected-file (completing-read "Select article: " files nil t)))
+    (insert (format "[[%s][]]" selected-file))))
+
 
 (provide 'init-blog)

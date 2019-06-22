@@ -1,6 +1,6 @@
 ;; workgroup mode
 (require 'workgroups2)
-(workgroups-mode 1)
+(workgroups-mode 0)
 (setq wg-prefix-key (kbd "C-c z"))
 ;; <prefix> <key>
 ;; <prefix> c          ; create workgroup

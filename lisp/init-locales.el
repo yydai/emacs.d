@@ -399,7 +399,12 @@ PROMPT sets the `read-string prompt."
 (diminish 'whole-line-or-region-global-mode)
 (diminish 'whole-line-or-region-mode)
 (diminish 'whitespace-cleanup-mode)
-(diminish 'display-time-mode)
+(diminish 'whole-line-or-region-local-mode)
+(diminish 'highlight-parentheses-mode)
+(diminish 'projectile-mode)
+(diminish 'column-number-mode)
+(diminish 'xah-math-input-mode)
+;; (diminish 'display-time-mode)
 
 ;; use the spacemacs mode line
 ;;(require 'spaceline-config)
@@ -463,6 +468,76 @@ PROMPT sets the `read-string prompt."
 
 (global-set-key [backtab] 'tab-indent-or-complete)
 
+;;(setq desktop-load-locked-desktop t)
+;;(call-interactively 'desktop-read t (vector "~/.emacs.d/desktops/" t))
+
+(global-set-key (kbd "C-<") #'embrace-commander)
+(add-hook 'org-mode-hook #'embrace-org-mode-hook)
+
+;; what's this ?
+;; look at here: https://www.reddit.com/r/emacs/comments/2adj9w/isearch_backspace_behaviour/
+;;(define-key isearch-mode-map [remap isearch-delete-char] 'isearch-del-char)
+
+
+
+;; 下面的配置是，org 的 table 中英文对齐代码， 有用
+;; https://emacs-china.org/t/topic/440/13
+(setq fonts
+      (cond ((eq system-type 'darwin)     '("Monaco"    "STHeiti"))
+            ((eq system-type 'gnu/linux)  '("Menlo"     "WenQuanYi Zen Hei"))
+            ((eq system-type 'windows-nt) '("Consolas"  "Microsoft Yahei"))))
+(set-face-attribute 'default nil :font
+                    (format "%s:pixelsize=%d" (car fonts) 14))
+(dolist (charset '(kana han symbol cjk-misc bopomofo))
+  (set-fontset-font (frame-parameter nil 'font) charset
+                    (font-spec :family (car (cdr fonts)))))
+;; Fix chinese font width and rescale
+(setq face-font-rescale-alist '(("Microsoft Yahei" . 1.2) ("WenQuanYi Micro Hei Mono" . 1.2) ("STHeiti". 1.2)))
+
+
+;;; https://stackoverflow.com/questions/730751/hiding-m-in-emacs
+;;; 不显示 ^M
+(defun remove-dos-eol ()
+  "Do not show ^M in files containing mixed UNIX and DOS line endings."
+  (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M []))
+
+(add-hook 'text-mode-hook 'remove-dos-eol)
+
+;; https://emacs.stackexchange.com/questions/33993/orgmode-latex-preview-change-font-color
+;; let preview formula more big
+(plist-put org-format-latex-options :scale 2)
+
+
+;; music
+(setq org-latex-create-formula-image-program 'imagemagick)
+
+;; auto preview latex
+
+(require 'awesome-tray)
+(awesome-tray-mode 0)
+
+;; set modeline font and size
+(set-face-attribute 'mode-line nil :font "DejaVu Sans Mono-12")
+
+(setq org-agenda-clockreport-parameter-plist
+      '(:fileskip0 t :link t :maxlevel 2 :formula "$5=($3+$4)*(60/25);t"))
+
+(defun my/org-pomodoro-text-time ()
+  "Return status info about org-pomodoro and if org-pomodoro is not running, try to print info about org-clock.
+    If either org-pomodoro or org-clock aren't active, print \"No Active Task \" "
+  (interactive)
+  (cond ((equal :none org-pomodoro-state)
+         (if (org-clock-is-active)
+             (format "Clocked task: %d minutes - %s"
+                     (org-clock-get-clocked-time) (substring-no-properties org-clock-heading)
+                     "No Active task")))
+        ((equal :pomodoro org-pomodoro-state)
+         (format "%d - Pomodoro: %d minutes - %s"
+                 org-pomodoro-count (/ (org-pomodoro-remaining-seconds) 60) (substring-no-properties org-clock-heading)))
+        ((equal :short-break org-pomodoro-state) "Short Break")
+        ((equal :long-break org-pomodoro-state)  "Long Break")))
 (provide 'init-locales)
 
 ;;; init-locales.el ends here

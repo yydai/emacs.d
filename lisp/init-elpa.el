@@ -31,10 +31,10 @@ But you may use safer HTTPS instead.")
                          ))
 
 ;;; use Chinese mirrors
-;; (setq package-archives '(("gnu"   . "https://elpa.emacs-china.org/gnu/")
-;;                          ("melpa" . "https://elpa.emacs-china.org/melpa/")
-;;                          ("melpa-stable" . "https://elpa.emacs-china.org/melpa-stable/")
-;;                          ))
+(setq package-archives '(("gnu"   . "https://elpa.emacs-china.org/gnu/")
+                         ("melpa" . "https://elpa.emacs-china.org/melpa/")
+                         ("melpa-stable" . "https://elpa.emacs-china.org/melpa-stable/")
+                         ))
 
 ;; (setq package-archives
 ;;       '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")

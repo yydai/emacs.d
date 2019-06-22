@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: latex header
+# key: latex_header
+# --
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto
+#+OPTIONS: html-preamble:t html-scripts:t html-style:t
+#+OPTIONS: html5-fancy:nil tex:imagemagick
+#+HTML_DOCTYPE: xhtml-strict
+#+HTML_CONTAINER: div
+#+LATEX_HEADER: \usepackage[table]{xcolor}
+#+LATEX_HEADER: \usepackage{tikz}
+#+STARTUP: inlineimages
+#+PROPERTY: header-args:latex :headers '("\\usepackage{tikz}") :fit yes :imagemagick yes :iminoptions -density 300 :imoutoptions

@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: latex header2
+# key: h2
+# --
+#+OPTIONS: html5-fancy:nil tex:imagemagick
+#+HTML_DOCTYPE: xhtml-strict
+#+HTML_CONTAINER: div
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css" />
+#+HTML_HEAD_EXTRA:
+#+LATEX_HEADER: \usepackage[table]{xcolor}
+#+LATEX_HEADER: \usepackage{tikz}
+#+STARTUP: inlineimages
+#+PROPERTY: header-args:latex :headers '("\\usepackage{tikz}") :fit yes :imagemagick yes :iminoptions -density 300 :imoutoptions

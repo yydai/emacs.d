@@ -39,4 +39,31 @@ workgroup
 ("n" wg-switch-to-workgroup-right "next group")
 )
 
+
+(defun my/mark-current-line (arg)
+  (interactive "p")
+  (when (not (use-region-p))
+    (back-to-indentation)
+    (set-mark-command nil)
+    (move-end-of-line 1)
+    )
+  )
+
+
+(global-unset-key [M-l])
+;; expand and mark, copy
+(defhydra hydra-expand-mark (global-map "M-l")
+  "
+Mark region
+^^^^^^^^-----------------------------------------------------------------
+"
+  ("q" er/mark-inside-quotes "inside quotes")
+  ("p" er/mark-inside-pairs "inside pairs")
+  ("s" er/mark-sentence "current sentence")
+  ("l" my/mark-current-line "current line")
+  ("c" thing-copy-line "copy"))
+
+
+
+
 (provide 'init-hydra)

@@ -86,13 +86,14 @@ typical word processor."
      (shell . t)
      (sql . t)
      (scheme . t)
-     (sqlite . t))))
+     (sqlite . t)
+     (asymptote . t))))
 
 
 ;; org blog settings
 (require 'ox-publish)
 (require 'ox-html)
-
+(require 'ox-rss)
 
 (setq org-publish-project-alist
       '(
@@ -114,7 +115,15 @@ typical word processor."
          :publishing-function org-publish-attachment
          )
 
-        ("blog" :components ("blog-notes" "blog-static"))
+        ("rss"
+         :base-directory "~/workspace/blog/org"
+         :base-extension "org"
+         :publishing-directory "~/workspace/blog/public_html"
+         :publishing-function (org-rss-publish-to-rss)
+         :html-link-home "http://0x100.club"
+         :html-link-use-abs-url t)
+
+        ("blog" :components ("blog-notes" "blog-static" "rss"))
 
         ))
 
@@ -123,10 +132,8 @@ typical word processor."
 ;; add jquery support
 (setq org-html-head-extra
       "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<link href='http://apps.bdimg.com/libs/highlight.js/9.1.0/styles/zenburn.min.css' rel='stylesheet'>
-<script src='http://apps.bdimg.com/libs/highlight.js/9.1.0/highlight.min.js'></script>
-<script>hljs.initHighlightingOnLoad();</script>
-<link rel='stylesheet' href='../css/worg2.css' typbe='text/css'/>
+<link rel='stylesheet' type='text/css' href='https://gongzhitaao.org/orgcss/org.css' />
+<link rel='stylesheet' href='../css/custom.css' typbe='text/css'/>
 <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico'>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src='https://www.googletagmanager.com/gtag/js?id=UA-111585106-1'></script>
@@ -134,14 +141,13 @@ typical word processor."
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-
 gtag('config', 'UA-111585106-1');
 </script>")
 
 (setq org-html-preamble "
 <div class='nav'>
 <div class='blog' style='text-align:right'>
-<a href='/index.html'> Home </a> | <a href='/contact.html'> About </a>
+<a href='/index.html'> Home </a> | <a href='/gallery_books/index.html'> Books </a> | <a href='/gallery_movies/index.html'> Movies </a> | <a href='/contact.html'> About </a>
 </div>
 </div>")
 
@@ -153,7 +159,7 @@ var base_url = 'https://api.github.com';
 var title = document.title;
 var owner = 'yydai';
 var repo = 'yydai.github.io';
-var search_issues = base_url + '/search/issues?q=' + title + '+user:' + owner + '+label:blog'+ '+state:open';
+var search_issues = base_url + '/search/issues?q=' + title + 'in:title' + '+user:' + owner + '+label:blog'+ '+state:open';
 
 console.log(\"search_issues = \"+ search_issues);
 
@@ -175,15 +181,15 @@ if(jQuery.isEmptyObject(items)) {
     create(title);
 } else {
     html_url = items.html_url;
-	document.body.innerHTML +=
+        document.body.innerHTML +=
 '<div id=\"comments\"><h2>Comments</h2><div id=\"header\">Want to leave a comment? Visit <a href=\"'+ html_url + '\"> this issue page on GitHub</a> (you will need a GitHub account).</div></div>'
 }
 
 
 function create(title) {
-	var create_url = 'https://blog-api-server.herokuapp.com/issues?title=' + title + '&labels=blog&body=Welcome to leave comments here.&owner=yydai&repo=yydai.github.io&auth=eXlkYWk6ZGVpc3Q5MjgxNw=='
+        var create_url = 'https://blog-api-server.herokuapp.com/issues?title=' + title + '&labels=blog&body=Welcome to leave comments here.&owner=yydai&repo=yydai.github.io&auth=eXlkYWk6ZGVpc3Q5MjgxNw=='
 
-	jQuery.ajax({
+        jQuery.ajax({
       type: 'GET',
       async: false,
       dataType:'json',
@@ -207,7 +213,7 @@ if(result.total_count == 1) {
 }
 
 function loadComments(data) {
-	repo = 'github.com'
+        repo = 'github.com'
     for (var i=0; i<data.length; i++) {
       var cuser = data[i].user.login;
       var cuserlink = 'https://' + repo + '/' + data[i].user.login;
@@ -215,7 +221,7 @@ function loadComments(data) {
       var cavatarlink = data[i].user.avatar_url;
       var cdate = Date.parse(data[i].created_at).toString('yyyy-MM-dd HH:mm:ss');
 
-	  var html_url = items.html_url + '#issuecomment-' + data[i].url.substring(data[i].url.lastIndexOf('/')+1);
+          var html_url = items.html_url + '#issuecomment-' + data[i].url.substring(data[i].url.lastIndexOf('/')+1);
 
       var code = '<div class=\"comment\"><div class=\"commentheader\"><div class=\"commentgravatar\">' + '<img src=\"' + cavatarlink + '\" alt=\"\" width=\"20\" height=\"20\">' + '</div><a class=\"commentuser\" href=\"'+ cuserlink + '\">' + cuser + '</a><a class=\"commentdate\" href=\"' + html_url + '\">' + cdate + '</a></div><div class=\"commentbody\">' + cbody + '</div></div>';
 
@@ -241,11 +247,11 @@ $.ajax(comments_api, {
 © 2017 yydai<br/>
 Email: dai92817@icloud.com
 </div>")
-
-
-
-;; this code can clear the cache and will regenerate all the html files
+(setq org-export-babel-evaluate nil)
 ;; (setq org-publish-use-timestamps-flag nil)
+
+;; this code can clear the cache and will regenerate all the html files
+;;
 ;;; screen shot
 ;;; https://emacs-china.org/t/org-mode/79
 (defun my-org-screenshot ()
@@ -259,6 +265,8 @@ same directory as the org-buffer and insert a link to this file."
           (concat (file-name-directory (buffer-file-name))
                   "/imgs/"
                   (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
+
+  (setq public_path (replace-regexp-in-string "org" "public_html" filename))
   (unless (file-exists-p (file-name-directory filename))
     (make-directory (file-name-directory filename)))
                                         ; take screenshot
@@ -266,21 +274,57 @@ same directory as the org-buffer and insert a link to this file."
       (progn
         (call-process-shell-command "screencapture" nil nil nil nil " -s " (concat
                                                                             "\"" filename "\"" ))
+
+        (copy-file filename public_path)
+        (message "Upload '%s' finished" public_path)
         (call-process-shell-command "convert" nil nil nil nil (concat "\"" filename "\" -resize  \"50%\"" ) (concat "\"" filename "\"" ))
         ))
-
   (setq relative-dir (concat "./imgs/" (file-name-nondirectory filename)))
-  ;; copy image file to publish dir, so I don't need to move the image by command
-  ;; This place has a bug, I need to know the current folder
-  ;; (dired-copy-file filename
-  ;;                  (format "~/workspace/blog/public_html/%s/imgs/%s"
-  ;;                          (car (last (butlast (split-string (file-name-directory filename) "\/") 3)))
-  ;;                          (file-name-nondirectory filename)) t)
-
   (if (file-exists-p filename)
-      (insert (concat "#+ATTR_HTML: :width 80%\n[[file:" relative-dir "]]")))
-  ;;(org-display-inline-images)
+      (insert (concat "#+ATTR_HTML: :width 100%\n[[file:" relative-dir "]]")))
   )
+
+(defun my-general-screenshort ()
+  "Take a screenshot into a time stamped unique-named file in the
+same directory as the org-buffer and insert a link to this file."
+  (interactive)
+  ;;(org-display-inline-images)
+  (setq filename
+        (concat
+         (make-temp-name
+          (concat (file-name-directory (buffer-file-name))
+                  "/imgs/"
+                  (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
+
+  (unless (file-exists-p (file-name-directory filename))
+    (make-directory (file-name-directory filename)))
+                                        ; take screenshot
+  (if (eq system-type 'darwin)
+      (progn
+        (call-process-shell-command "screencapture" nil nil nil nil " -s " (concat
+                                                                            "\"" filename "\"" ))
+
+        (call-process-shell-command "convert" nil nil nil nil (concat "\"" filename "\" -resize  \"50%\"" ) (concat "\"" filename "\"" ))
+        ))
+  (setq relative-dir (concat "./imgs/" (file-name-nondirectory filename)))
+  (if (file-exists-p filename)
+      (insert (concat "#+ATTR_HTML: :width 100%\n[[file:" relative-dir "]]")))
+  )
+
+(require 'org-download)
+
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
+
+;; copy image file to publish dir, so I don't need to move the image by command
+;; This place has a bug, I need to know the current folder
+;; (dired-copy-file filename
+;;                  (format "~/workspace/blog/public_html/%s/imgs/%s"
+;;                          (car (last (butlast (split-string (file-name-directory filename) "\/") 3)))
+;;                          (file-name-nondirectory filename)) t)
+
+
+;;(org-display-inline-images)
 
 
 
@@ -385,8 +429,8 @@ same directory as the org-buffer and insert a link to this file."
 (defun insert-gist (link)
   (interactive "sEmbed link is?")
   (insert (format "#+BEGIN_EXPORT html
-	%s
-	#+END_EXPORT" link)))
+        %s
+        #+END_EXPORT" link)))
 
 ;; xah math input
 ;; for more information please visit here:http://ergoemacs.org/emacs/xmsi-math-symbols-input.html
@@ -397,10 +441,7 @@ same directory as the org-buffer and insert a link to this file."
 (define-key global-map "\C-cc" 'org-capture)
 
 ;; C-'
-(setq org-agenda-files '("~/gtd/inbox.org"
-                         "~/gtd/gtd.org"
-                         "~/gtd/tickler.org"
-                         "~/gtd/someday.org"))
+(setq org-agenda-files '("~/gtd/inbox.org"))
 
 
 (defun verify-refile-target ()
@@ -408,12 +449,11 @@ same directory as the org-buffer and insert a link to this file."
   (not (member (nth 2 (org-heading-components)) org-done-keywords)))
 (setq org-refile-target-verify-function 'verify-refile-target)
 
-(setq org-agenda-dir "~/workspace/gtd")
+;;(setq org-agenda-dir "~/workspace/gtd")
 
 (setq org-refile-targets '((nil :maxlevel . 5)
-                           ("~/gtd/gtd.org" :maxlevel . 3)
-                           ("~/gtd/someday.org" :level . 1)
-                           ("~/gtd/tickler.org" :maxlevel . 2)))
+                           ("~/gtd/inbox.org" :maxlevel . 1)
+                           ))
 
 ;; TODO entry to automatically change to DONE when all children are done
 ;; code from: http://orgmode.org/manual/Breaking-down-tasks.html#Breaking-down-tasks
@@ -451,8 +491,8 @@ same directory as the org-buffer and insert a link to this file."
 
 ;; tags
 (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h)
-                      ("@homework" . ?o)
                       ("@buy" . ?b)
+                      ("@bossurgent" . ?u)
                       ("@study" . ?s)))
 
 
@@ -470,10 +510,7 @@ same directory as the org-buffer and insert a link to this file."
 (setq org-capture-templates '(("t" "Todo [inbox]" entry
                                (file+headline "~/gtd/inbox.org" "Tasks")
                                "* TODO %i%?")
-                              ("T" "Tickler" entry
-                               (file+headline "~/gtd/tickler.org" "Tickler")
-                               "* %i%? \n %U")))
-
+                              ))
 
 ;; In order to include entries from the Emacs diary into Org mode's agenda
 (setq org-agenda-include-diary t
@@ -502,6 +539,10 @@ same directory as the org-buffer and insert a link to this file."
 (setq mark-holidays-in-calendar t)
 (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
 (setq cal-china-x-general-holidays '((holiday-lunar 1 15 "元宵节")))
+(setq calendar-holidays
+      (append cal-china-x-important-holidays
+              cal-china-x-general-holidays
+              ))
 ;; (setq calendar-holidays
 ;;       (append cal-china-x-important-holidays
 ;;               cal-china-x-general-holidays
@@ -539,9 +580,9 @@ same directory as the org-buffer and insert a link to this file."
 ;; https://emacs-china.org/t/org-agenda/232
 (require 'appt)
 (setq appt-time-msg-list nil)    ;; clear existing appt list
-(setq appt-display-interval '5)  ;; warn every 5 minutes from t - appt-message-warning-time
+(setq appt-display-interval '10)  ;; warn every 5 minutes from t - appt-message-warning-time
 (setq
- appt-message-warning-time '15  ;; send first warning 15 minutes before appointment
+ appt-message-warning-time '20  ;; send first warning 15 minutes before appointment
  appt-display-mode-line nil     ;; don't show in the modeline
  appt-display-format 'window)   ;; pass warnings to the designated window function
 (appt-activate 1)                ;; activate appointment notification
@@ -563,17 +604,24 @@ same directory as the org-buffer and insert a link to this file."
       '(("x" agenda)
         ("d" todo "DONE")
         ("W" todo-tree "BLOCKED")
-        ("gm" tags "@game")
+        ("gs" tags "@study")
         ("w" "Weekly Review"
          ((agenda "" ((org-agenda-ndays 7))) ;; review upcoming deadlines and appointments
           (todo "TODO") ;; review all projects (assuming you use todo keywords to designate projects)
-          (todo "BLOCKED") ;; review someday/maybe items
           (todo "DONE")))
-        ("v" tags-todo "+boss-urgent")
-        ("U" tags-tree "+boss-urgent")
+        ("v" tags-todo "@bossurgent")
+        ("U" tags-tree "@bossurgent")
         ("f" occur-tree "\\<FIXME\\>")
         ("h" . "HOME+Name tags searches") ; description for "h" prefix
         ("ss" tags "@study")
+        ("su" tags "@bossurgent")
+        ("sw" tags "@work")
+        ("c" "Simple agenda view"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (agenda "")
+          (alltodo "")))
         ))
 
 (setq org-clock-out-when-done t)
@@ -585,6 +633,8 @@ same directory as the org-buffer and insert a link to this file."
   )
 (add-hook 'org-after-todo-state-change-hook
           'archive-when-done)
+;; Set default column view headings: Task Total-Time Time-Stamp
+(setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
 
 
 (setq org-archive-location (concat "~/gtd/archive/archive-" (format-time-string "%Y%m" (current-time)) ".org_archive::"))

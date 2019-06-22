@@ -179,8 +179,12 @@
 (require 'highlight-parentheses)
 (require 'julia-repl)
 (require 'init-pdf)
-(require 'init-workgroup)
+;; cost so much cpu and mem
+;;(require 'init-workgroup)
 (require 'init-hydra)
+;;(require 'init-aweshell)
+(require 'thing-edit)
+
 
 ;;----------------------------------------------------------------------------
 ;; Locales (setting them earlier in this file doesn't work in X)

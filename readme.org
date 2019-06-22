@@ -1,18 +1,18 @@
 * My Personal Emacs
 
 ** How to install Emacs on OSX
-	#+BEGIN_SRC shell
-	brew install --with-cocoa emacs
-	# finally link it to your Applications folder
-	brew linkapps emacs
-	#+END_SRC
+        #+BEGIN_SRC shell
+        brew install --with-cocoa emacs
+        # finally link it to your Applications folder
+        brew linkapps emacs
+        #+END_SRC
 
-	You can visit [[https://www.emacswiki.org/emacs/EmacsForMacOS#toc12][here]] for more details.
+        You can visit [[https://www.emacswiki.org/emacs/EmacsForMacOS#toc12][here]] for more details.
 ** Org mode
-	Org mode can help you write more better and you will enjoy
-	writing in this way.
+        Org mode can help you write more better and you will enjoy
+        writing in this way.
 
-	There are many features:
+        There are many features:
     - Screenshot
     - Drag images file from local disk
     - Insert github gist
@@ -20,95 +20,108 @@
     - Set org mode bullets
     - Support org mode to html blog
 
-	| Keybinding  | command              | description                                |
-	|-------------+----------------------+--------------------------------------------|
-	| s-<SPC> c s | my-org-screenshot    | Take a screenshot into a time stamped file |
-	|             | insert-gist          | Insert embeded gist link                   |
+        | Keybinding  | command              | description                                |
+        |-------------+----------------------+--------------------------------------------|
+        | s-<SPC> c s | my-org-screenshot    | Take a screenshot into a time stamped file |
+        |             | insert-gist          | Insert embeded gist link                   |
 
-	You can insert a Youtube share like:
+        You can insert a Youtube share like:
 
-	#+BEGIN_SRC
-	[[yt:share_id]]
-	#+END_SRC
+        #+BEGIN_SRC
+        [[yt:share_id]]
+        #+END_SRC
 
 ** Blog
-	You can find my blog config in the /lisp/init-blog.el.
+        You can find my blog config in the /lisp/init-blog.el.
 
-	I often write my blog with the workflow of blow:
+        I often write my blog with the workflow of blow:
     - With command *blog-create* to create a new blog.
     - Enter the file name and the directory you want to store
     - Enter the title of the blog you want to show
     - Use command *blog-preview* to preview the current blog locally
     - If all things is ok, you can use command of *publish-site* .
 
-	You need write a *makefile* in your blog site file, because we'll use *make* to publish the site.
+        You need write a *makefile* in your blog site file, because we'll use *make* to publish the site.
 
-	This is my [[https://gist.github.com/yydai/18a9e5e80547dedb5195134a5a3832e9][makefile]].
+        This is my [[https://gist.github.com/yydai/18a9e5e80547dedb5195134a5a3832e9][makefile]].
 
 ** Some minor modes
 *** Disable mouse mode
-	This mode is default open, so you can't use mouse in Emacs.
+        This mode is default open, so you can't use mouse in Emacs.
 
 *** Text process mode
-	The goal of this mode is to process text more easily.
+        The goal of this mode is to process text more easily.
 
-	Now, I only support the line process including *SELECT*, *COPY*, *KILL*, *CUT*.
+        Now, I only support the line process including *SELECT*, *COPY*, *KILL*, *CUT*.
 
 **** Key bindings
-	 The prefix key is *C-c t*.
+         The prefix key is *C-c t*.
 
-	 | keybinding | command             | description                             |
-	 |------------+---------------------+-----------------------------------------|
-	 | C-c t s    | select-current-line | Select the current line                 |
-	 | C-c t k    | kill-current-line   | Delete the current line, like *dd* of vim |
-	 | C-c t w    | copy-current-line   | Copy the current line                   |
-	 | C-c t c    | cut-current-line    | Cut the current line                    |
-	 |------------+---------------------+-----------------------------------------|
+         | keybinding | command             | description                             |
+         |------------+---------------------+-----------------------------------------|
+         | C-c t s    | select-current-line | Select the current line                 |
+         | C-c t k    | kill-current-line   | Delete the current line, like *dd* of vim |
+         | C-c t w    | copy-current-line   | Copy the current line                   |
+         | C-c t c    | cut-current-line    | Cut the current line                    |
+         |------------+---------------------+-----------------------------------------|
 
-	You can find the source file in /lisp/init-text-process.el.
+        You can find the source file in /lisp/init-text-process.el.
 
+** Keybindings
+*** window/buffer in init-windows.el
+    M-o is a prefix key defined by myself.
+
+    1. swap two buffer
+       M-o s
+    2. maximize buffer
+       M-o m
+    3. balance buffers
+       M-o b
+    4. enlarge buffer
+       M-o M-=
+    5. shrunk buffer
+       M-o M--
 
 ** Other keybindings
 
    The prefix key is *s-<SPC>*. In this place, *s* is *command* key on MAC.
 
-	| keybinding  | command              | description                     |
-	|-------------+----------------------+---------------------------------|
-	| s-<SPC> s ; | avy-goto-char        |                                 |
-	| s-<SPC> s d | dash-at-point        | Will look up the things in dash |
-	| s-<SPC> s s | projectile-ag        | Use ag search                   |
-	| s-<SPC> f f | projectile-find-file | Find file in project            |
-	| C-;         | ace-jump-char-mode   | Jump to the char                |
-	| C-,         | ace-jump-line-mode   | Jump to some line               |
-	|-------------+----------------------+---------------------------------|
-
+        | keybinding  | command              | description                     |
+        |-------------+----------------------+---------------------------------|
+        | s-<SPC> s ; | avy-goto-char        |                                 |
+        | s-<SPC> s d | dash-at-point        | Will look up the things in dash |
+        | s-<SPC> s s | projectile-ag        | Use ag search                   |
+        | s-<SPC> f f | projectile-find-file | Find file in project            |
+        | C-;         | ace-jump-char-mode   | Jump to the char                |
+        | C-,         | ace-jump-line-mode   | Jump to some line               |
+        |-------------+----------------------+---------------------------------|
 
 ** Locals set
 
 *** Key mappings
-	I have mapped some key to numbers.
-	| current | original |
-	|---------+----------|
-	| %       |        8 |
-	| &       |        7 |
-	| -       |        9 |
-	| =       |        0 |
+        I have mapped some key to numbers.
+        | current | original |
+        |---------+----------|
+        | %       |        8 |
+        | &       |        7 |
+        | -       |        9 |
+        | =       |        0 |
 
 *** Insert link in org mode
-	Use the command *link* to insert a link more easily.
-	This will prompt user to input adress and description.
+        Use the command *link* to insert a link more easily.
+        This will prompt user to input adress and description.
 
 **** Delete trailing whitespace
 
-	I add this to my config file. This will ensure to delete the trailing whitespace when I save a file.
+        I add this to my config file. This will ensure to delete the trailing whitespace when I save a file.
 
-	#+BEGIN_SRC emacs-lisp
-	(add-hook 'before-save-hook
+        #+BEGIN_SRC emacs-lisp
+        (add-hook 'before-save-hook
           'delete-trailing-whitespace)
-	#+END_SRC
+        #+END_SRC
 
 **** Switch the key bindings for *C-w* and *M-w*.
-	 I will use the *C-w* for copy and *M-w* for cut.
+         I will use the *C-w* for copy and *M-w* for cut.
 
 ** issues
 
